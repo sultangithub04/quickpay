@@ -4,6 +4,9 @@ import { ITransaction } from './transaction.interface';
 
 const TransactionSchema = new Schema<ITransaction>(
   {
+    _id:{
+      type: String
+    },
     type: {
       type: String,
       enum: ['add_money', 'withdraw', 'send', 'cash_in', 'cash_out']

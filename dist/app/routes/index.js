@@ -6,12 +6,13 @@ const user_routes_1 = require("../modules/user/user.routes");
 const auth_routes_1 = require("../modules/auth/auth.routes");
 const transaction_routes_1 = require("../modules/transaction/transaction.routes");
 const admin_routes_1 = require("../modules/admin/admin.routes");
+const wallet_routes_1 = require("../modules/wallet/wallet.routes");
 // import { AuthRoutes } from "../modules/auth/auth.route"
 // import { UserRoutes } from "../modules/user/user.route"
 exports.router = (0, express_1.Router)();
 const moduleRoutes = [
     {
-        path: "/user",
+        path: "/users",
         route: user_routes_1.UserRoutes
     },
     {
@@ -25,6 +26,10 @@ const moduleRoutes = [
     {
         path: "/admin",
         route: admin_routes_1.AdminRoute
+    },
+    {
+        path: "/wallets",
+        route: wallet_routes_1.WalletRoutes
     }
 ];
 moduleRoutes.forEach((route) => {

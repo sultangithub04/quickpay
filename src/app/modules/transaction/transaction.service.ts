@@ -4,7 +4,7 @@ import { Wallet } from "../wallet/wallet.model";
 import { ITransaction } from "./transaction.interface";
 import { User } from "../user/user.model";
 import { Transaction } from "./transaction.model";
-const createTopUpMoney = async (userId:string, payload: Partial<ITransaction>) => {
+const createTopUpMoney = async (userId: string, payload: Partial<ITransaction>) => {
   // 1. Check if user exists
   const user = await User.findById(userId);
   if (!user) {
@@ -17,13 +17,13 @@ const createTopUpMoney = async (userId:string, payload: Partial<ITransaction>) =
     throw new AppError(httpStatus.NOT_FOUND, "Wallet not found");
   }
 
-  const {amount}= payload
-    // 3. Validate amount
+  const { amount } = payload
+  // 3. Validate amount
   if (!amount || amount <= 0) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid amount");
   }
 
-  
+
   // 4. Update wallet balance
   wallet.balance += amount;
   await wallet.save();
@@ -39,15 +39,15 @@ const createTopUpMoney = async (userId:string, payload: Partial<ITransaction>) =
     fee: 0,
     commission: 0,
   }
-);
+  );
 
 
-    return {
+  return {
     transactionId: transaction._id,
     newBalance: wallet.balance,
   };
 }
-const createWithdrawMoney = async (userId:string, payload: Partial<ITransaction>) => {
+const createWithdrawMoney = async (userId: string, payload: Partial<ITransaction>) => {
   // 1. Check if user exists
   const user = await User.findById(userId);
   if (!user) {
@@ -60,13 +60,13 @@ const createWithdrawMoney = async (userId:string, payload: Partial<ITransaction>
     throw new AppError(httpStatus.NOT_FOUND, "Wallet not found");
   }
 
-  const {amount}= payload
-    // 3. Validate amount
+  const { amount } = payload
+  // 3. Validate amount
   if (!amount || amount <= 0) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid amount");
   }
 
-  
+
   // 4. Update wallet balance
   wallet.balance -= amount;
   await wallet.save();
@@ -82,15 +82,15 @@ const createWithdrawMoney = async (userId:string, payload: Partial<ITransaction>
     fee: 0,
     commission: 0,
   }
-);
+  );
 
 
-    return {
+  return {
     transactionId: transaction._id,
     newBalance: wallet.balance,
   };
 }
-const createSendMoney = async (userId:string, payload: Partial<ITransaction>) => {
+const createSendMoney = async (userId: string, payload: Partial<ITransaction>) => {
 
   // 1. Check if user exists
   const user = await User.findById(userId);
@@ -106,11 +106,11 @@ const createSendMoney = async (userId:string, payload: Partial<ITransaction>) =>
     throw new AppError(httpStatus.NOT_FOUND, "Wallet not found");
   }
 
-  const {phone, amount}= payload
+  const { phone, amount } = payload
 
-const receiverUser = await User.findOne({phone})
-console.log(receiverUser);
- if (!receiverUser) {
+  const receiverUser = await User.findOne({ phone })
+  console.log(receiverUser);
+  if (!receiverUser) {
     throw new AppError(httpStatus.NOT_FOUND, "Receiver user not found");
   }
 
@@ -120,12 +120,12 @@ console.log(receiverUser);
   }
 
 
-    // 3. Validate amount
+  // 3. Validate amount
   if (!amount || amount <= 0) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid amount");
   }
 
-  
+
   senderWallet.balance -= amount;
   receiverWallet.balance += amount;
 
@@ -145,15 +145,15 @@ console.log(receiverUser);
     fee: 0,
     commission: 0,
   }
-);
+  );
 
 
-    return {
+  return {
     transactionId: transaction._id,
     newBalance: senderWallet.balance,
   };
 }
-const createCashIn = async (userId:string, payload: Partial<ITransaction>) => {
+const createCashIn = async (userId: string, payload: Partial<ITransaction>) => {
 
   // 1. Check if user exists
   const user = await User.findById(userId);
@@ -170,11 +170,11 @@ const createCashIn = async (userId:string, payload: Partial<ITransaction>) => {
     throw new AppError(httpStatus.NOT_FOUND, "Wallet not found");
   }
 
-  const {phone, amount}= payload
+  const { phone, amount } = payload
 
-const receiverUser = await User.findOne({phone})
+  const receiverUser = await User.findOne({ phone })
 
- if (!receiverUser) {
+  if (!receiverUser) {
     throw new AppError(httpStatus.NOT_FOUND, "Receiver user not found");
   }
 
@@ -184,12 +184,12 @@ const receiverUser = await User.findOne({phone})
   }
 
 
-    // 3. Validate amount
+  // 3. Validate amount
   if (!amount || amount <= 0) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid amount");
   }
 
-  
+
   senderWallet.balance -= amount;
   receiverWallet.balance += amount;
 
@@ -209,15 +209,15 @@ const receiverUser = await User.findOne({phone})
     fee: 0,
     commission: 0,
   }
-);
+  );
 
 
-    return {
+  return {
     transactionId: transaction._id,
     newBalance: senderWallet.balance,
   };
 }
-const createHistory = async (userId:string) => {
+const createHistory = async (userId: string) => {
 
   // 1. Check if user exists
   const user = await User.findById(userId);
@@ -234,24 +234,24 @@ const createHistory = async (userId:string) => {
   //   throw new AppError(httpStatus.NOT_FOUND, "Wallet not found");
   // }
 
-    // Filter: Show transactions where user is sender or receiver or initiatedBy
-    const filter = {
-      $or: [
-        { sender: userId },
-        { receiver: userId },
-        { initiatedBy: userId }
-      ]
-    };
+  // Filter: Show transactions where user is sender or receiver or initiatedBy
+  const filter = {
+    $or: [
+      { sender: userId },
+      { receiver: userId },
+      { initiatedBy: userId }
+    ]
+  };
 
-    const transactions = await Transaction.find(filter)
-      .sort({ createdAt: -1 })
-      .exec();
+  const transactions = await Transaction.find(filter)
+    .sort({ createdAt: -1 })
+    .exec();
 
-    const total = await Transaction.countDocuments(filter);
+  const total = await Transaction.countDocuments(filter);
 
-    return {transactions, total}
+  return { transactions, total }
 }
-const createCashout = async (userId:string, payload: Partial<ITransaction>) => {
+const createCashout = async (userId: string, payload: Partial<ITransaction>) => {
 
   // 1. Check if user exists
   const user = await User.findById(userId);
@@ -268,11 +268,11 @@ const createCashout = async (userId:string, payload: Partial<ITransaction>) => {
     throw new AppError(httpStatus.NOT_FOUND, "Wallet not found");
   }
 
-  const {phone, amount}= payload
+  const { phone, amount } = payload
 
-const receiverUser = await User.findOne({phone})
+  const receiverUser = await User.findOne({ phone })
 
- if (!receiverUser) {
+  if (!receiverUser) {
     throw new AppError(httpStatus.NOT_FOUND, "Receiver user not found");
   }
 
@@ -282,12 +282,12 @@ const receiverUser = await User.findOne({phone})
   }
 
 
-    // 3. Validate amount
+  // 3. Validate amount
   if (!amount || amount <= 0) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid amount");
   }
 
-  
+
   senderWallet.balance += amount;
   receiverWallet.balance -= amount;
 
@@ -307,10 +307,10 @@ const receiverUser = await User.findOne({phone})
     fee: 0,
     commission: 0,
   }
-);
+  );
 
 
-    return {
+  return {
     transactionId: transaction._id,
     newBalance: senderWallet.balance,
   };
@@ -320,8 +320,8 @@ const receiverUser = await User.findOne({phone})
 
 
 export const TransactionServices = {
-    createTopUpMoney,createWithdrawMoney, createSendMoney, createCashIn, createCashout, createHistory
+  createTopUpMoney, createWithdrawMoney, createSendMoney, createCashIn, createCashout, createHistory
 }
 
- 
+
 

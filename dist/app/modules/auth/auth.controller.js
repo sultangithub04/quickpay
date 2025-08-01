@@ -17,6 +17,15 @@ const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const catchAsync_1 = require("../../utils/catchAsync");
 const sendResponse_1 = require("../../utils/sendResponse");
 const auth_service_1 = require("./auth.service");
+const registerUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield auth_service_1.AuthServices.createUser(req.body);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.default.CREATED,
+        message: "User registered Successfully",
+        data: user,
+    });
+}));
 const credentialsLogin = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const loginInfo = yield auth_service_1.AuthServices.credentialsLogin(req.body);
     (0, sendResponse_1.sendResponse)(res, {
@@ -45,6 +54,7 @@ const logout = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0
     });
 }));
 exports.AuthControllers = {
+    registerUser,
     credentialsLogin,
     logout,
 };

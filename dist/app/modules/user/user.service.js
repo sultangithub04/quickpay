@@ -26,29 +26,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserServices = void 0;
 const user_model_1 = require("./user.model");
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
-const env_1 = require("../../config/env");
-const wallet_model_1 = require("../wallet/wallet.model");
-const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    if (payload.role === "ADMIN") {
-        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Unathorioze  Access");
+const user_interface_1 = require("./user.interface");
+const getUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    //Check if user exists
+    const user = yield user_model_1.User.findById(userId).select("-password");
+    if (!user) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "User not found");
     }
-    console.log(payload);
-    const { phone, password } = payload, rest = __rest(payload, ["phone", "password"]);
-    const isUserExist = yield user_model_1.User.findOne({ phone });
-    if (isUserExist) {
-        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "User Already Exist");
+    return user;
+});
+const updateUser = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const { phone } = payload, rest = __rest(payload, ["phone"]);
+    const ifUserExist = yield user_model_1.User.findById(userId);
+    console.log(phone);
+    if (!ifUserExist) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "User Not Found");
     }
-    const hashedPassword = yield bcryptjs_1.default.hash(password, Number(env_1.envVars.BCRYPT_SALT_ROUND));
-    const user = yield user_model_1.User.create(Object.assign({ phone, password: hashedPassword }, rest));
-    const wallet = yield wallet_model_1.Wallet.create({
-        user: user._id,
-        balance: 50,
-        isBlocked: false,
-    });
-    return { user, wallet };
+    if (payload.role === user_interface_1.Role.SUPER_ADMIN || payload.role === user_interface_1.Role.ADMIN) {
+        throw new AppError_1.default(http_status_codes_1.default.FORBIDDEN, "You are not authorized");
+    }
+    const newUpdatedUser = yield user_model_1.User.findByIdAndUpdate(userId, rest, { new: true, runValidators: true }).select("-password");
+    return newUpdatedUser;
 });
 exports.UserServices = {
-    createUser,
+    getUser, updateUser
 };

@@ -17,15 +17,29 @@ const catchAsync_1 = require("../../utils/catchAsync");
 const sendResponse_1 = require("../../utils/sendResponse");
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const user_service_1 = require("./user.service");
-const createUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield user_service_1.UserServices.createUser(req.body);
+const getUserInfo = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const userid = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+    const user = yield user_service_1.UserServices.getUser(userid);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: http_status_codes_1.default.CREATED,
-        message: "User registered Successfully",
+        message: "logged-in user info Get Successfully",
+        data: user,
+    });
+}));
+const updateUserInfo = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const userid = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+    const payload = req.body;
+    const user = yield user_service_1.UserServices.updateUser(userid, payload);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.default.CREATED,
+        message: "user info updated Successfully",
         data: user,
     });
 }));
 exports.UserControllers = {
-    createUser,
+    getUserInfo, updateUserInfo
 };

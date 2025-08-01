@@ -84,17 +84,19 @@ Built using RESTful API principles, the system is powered by TypeScript, Express
 | Method | Endpoint                   | Description                            |
 |--------|----------------------------|----------------------------------------|
 | GET    | `/wallets/me`              | View logged-in user's wallet           |
-| POST   | `/wallets/top-up`          | Top-up balance                         |
-| POST   | `/wallets/send`            | Send money to another user             |
-| POST   | `/wallets/cash-out`        | Cash out to another user               |
+
 
 ---
 
 ### 📄 Transaction Routes
 | Method | Endpoint                   | Description                          |
 |--------|----------------------------|--------------------------------------|
-| GET    | `/transactions/me`         | Get own transactions (paginated)     |
-
+| PATCH  | `/transactions/topup`      | Top-up balance                       |
+| PATCH  | `/transactions/withdraw`   | withdraw balance                     |
+| PATCH  | `/transactions/send`       | Send money to another user           |
+| PATCH  | `/transactions/cash-in`    | Cash in to  agent                    |
+| PATCH  | `/transactions/cash-out`   | Cash out from agent                  |
+| GET    | `/transactions/me`         | Get own transactions  info           |
 ---
 
 ### 🛠️ Admin Routes
@@ -107,10 +109,10 @@ Built using RESTful API principles, the system is powered by TypeScript, Express
 | PATCH  | `/admin/wallets/block/:walletId`   | Block a wallet                     |
 | PATCH  | `/admin/wallets/unblock/:walletId` | Unblock a wallet                   |
 | PATCH  | `/admin/agents/approve/:id`        | Approve an agent                   |
-| PATCH  | `/admin/agents/suspend/:id`        | Suspend an agent                   |
 | PATCH  | `/admin/system-settings`           | Set fees, commission, limits       |
 
 ---
+
 
 ## 🛡️ Security & Validation
 - JWT-based route protection
@@ -124,12 +126,12 @@ Built using RESTful API principles, the system is powered by TypeScript, Express
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/digital-wallet.git
+git clone https://github.com/Apollo-Level2-Web-Dev/B5A5.git
 
 # Install dependencies
 npm install
 
-# Create your environment variables
+# Create  environment variables
 cp .env.example .env
 
 # Run in development mode

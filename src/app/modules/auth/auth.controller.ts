@@ -5,6 +5,16 @@ import { catchAsync } from "../../utils/catchAsync"
 import { sendResponse } from "../../utils/sendResponse"
 import { AuthServices } from "./auth.service"
 
+const registerUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const user = await AuthServices.createUser(req.body)
+
+        sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "User registered Successfully",
+        data: user,
+    })
+})
 const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const loginInfo = await AuthServices.credentialsLogin(req.body)
 
@@ -40,6 +50,7 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
 
 
 export const AuthControllers = {
+    registerUser,
     credentialsLogin,
     logout,
 }

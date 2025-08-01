@@ -30,6 +30,26 @@ const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
 const userTokens_1 = require("../../utils/userTokens");
 const user_model_1 = require("../user/user.model");
+const wallet_model_1 = require("../wallet/wallet.model");
+const env_1 = require("../../config/env");
+const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    if (payload.role === "ADMIN") {
+        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Unathorioze  Access");
+    }
+    const { phone, password } = payload, rest = __rest(payload, ["phone", "password"]);
+    const isUserExist = yield user_model_1.User.findOne({ phone });
+    if (isUserExist) {
+        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "User Already Exist");
+    }
+    const hashedPassword = yield bcryptjs_1.default.hash(password, Number(env_1.envVars.BCRYPT_SALT_ROUND));
+    const user = yield user_model_1.User.create(Object.assign({ phone, password: hashedPassword }, rest));
+    const wallet = yield wallet_model_1.Wallet.create({
+        user: user._id,
+        balance: 50,
+        isBlocked: false,
+    });
+    return { user, wallet };
+});
 const credentialsLogin = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const { phone, password } = payload;
     const isUserExist = yield user_model_1.User.findOne({ phone });
@@ -50,5 +70,6 @@ const credentialsLogin = (payload) => __awaiter(void 0, void 0, void 0, function
     };
 });
 exports.AuthServices = {
+    createUser,
     credentialsLogin,
 };

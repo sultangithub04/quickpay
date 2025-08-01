@@ -5,17 +5,33 @@ import { sendResponse } from "../../utils/sendResponse"
 import httpStatus from "http-status-codes";
 import { UserServices } from "./user.service";
 
-const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const user = await UserServices.createUser(req.body)
+const getUserInfo = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const userid = req.user?.userId
+    const user = await UserServices.getUser(userid)
 
-        sendResponse(res, {
+    sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
-        message: "User registered Successfully",
+        message: "logged-in user info Get Successfully",
         data: user,
     })
 })
 
+const updateUserInfo = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const userid = req.user?.userId
+    const payload= req.body
+    const user = await UserServices.updateUser(userid, payload)
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "user info updated Successfully",
+        data: user,
+    })
+})
+
+
+
 export const UserControllers = {
-    createUser,
+    getUserInfo,updateUserInfo
 }

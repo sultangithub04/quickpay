@@ -1,47 +1,34 @@
-import { IUser } from "./user.interface"
 import { User } from "./user.model";
 import httpStatus from "http-status-codes";
-import bcryptjs from "bcryptjs";
 import AppError from "../../errorHelpers/AppError";
-import { envVars } from "../../config/env";
-import { Wallet } from "../wallet/wallet.model";
-const createUser = async (payload: Partial<IUser>) => {
-    if(payload.role==="ADMIN"){
-    throw new AppError(httpStatus.BAD_REQUEST, "Unathorioze  Access")
+import { IUser, Role } from "./user.interface";
+
+const getUser = async (userId: string) => {
+
+    //Check if user exists
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, "User not found");
     }
-    console.log(payload);
-        const { phone, password, ...rest } = payload;
-
-    const isUserExist = await User.findOne({ phone })
-
-    if (isUserExist) {
-        throw new AppError(httpStatus.BAD_REQUEST, "User Already Exist")
-    }
-
-    const hashedPassword = await bcryptjs.hash(password as string, Number(envVars.BCRYPT_SALT_ROUND))
-
- 
-
-
-    const user = await User.create({
-        phone,
-        password: hashedPassword,
-        ...rest
-    })
-
-      const wallet = await Wallet.create({
-      user: user._id,
-      balance: 50,
-      isBlocked: false,
-    });
-
-    return {user, wallet}
-
+    return user
 }
 
+const updateUser = async (userId: string, payload: Partial<IUser>) => {
+    const { phone, ...rest } = payload
+    const ifUserExist = await User.findById(userId);
+    console.log(phone);
+    if (!ifUserExist) {
+        throw new AppError(httpStatus.NOT_FOUND, "User Not Found")
+    }
 
+    if (payload.role === Role.SUPER_ADMIN || payload.role === Role.ADMIN) {
+        throw new AppError(httpStatus.FORBIDDEN, "You are not authorized");
+    }
+    const newUpdatedUser = await User.findByIdAndUpdate(userId, rest, { new: true, runValidators: true }).select("-password")
 
-
+    return newUpdatedUser
+}
 export const UserServices = {
-    createUser,
+    getUser, updateUser
 }

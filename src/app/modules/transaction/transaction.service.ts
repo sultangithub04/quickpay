@@ -5,6 +5,7 @@ import { ITransaction } from "./transaction.interface";
 import { User } from "../user/user.model";
 import { Transaction } from "./transaction.model";
 const createTopUpMoney = async (userId: string, payload: Partial<ITransaction>) => {
+
   // 1. Check if user exists
   const user = await User.findById(userId);
   if (!user) {
@@ -16,7 +17,6 @@ const createTopUpMoney = async (userId: string, payload: Partial<ITransaction>) 
   if (!wallet) {
     throw new AppError(httpStatus.NOT_FOUND, "Wallet not found");
   }
-
   const { amount } = payload
   // 3. Validate amount
   if (!amount || amount <= 0) {
@@ -109,7 +109,7 @@ const createSendMoney = async (userId: string, payload: Partial<ITransaction>) =
   const { phone, amount } = payload
 
   const receiverUser = await User.findOne({ phone })
-  console.log(receiverUser);
+  // console.log(receiverUser);
   if (!receiverUser) {
     throw new AppError(httpStatus.NOT_FOUND, "Receiver user not found");
   }
@@ -157,7 +157,7 @@ const createCashIn = async (userId: string, payload: Partial<ITransaction>) => {
 
   // 1. Check if user exists
   const user = await User.findById(userId);
-  console.log(user);
+  // console.log(user);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
@@ -255,7 +255,7 @@ const createCashout = async (userId: string, payload: Partial<ITransaction>) => 
 
   // 1. Check if user exists
   const user = await User.findById(userId);
-  console.log(user);
+  // console.log(user);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }

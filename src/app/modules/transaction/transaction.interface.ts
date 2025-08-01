@@ -10,7 +10,6 @@ export type TransactionType =
 export type TransactionStatus = 'pending' | 'completed' | 'failed';
 
 export interface ITransaction extends Document {
-  _id?: string;
   type?: TransactionType;
   amount: number;
   phone?:number,

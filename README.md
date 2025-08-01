@@ -69,6 +69,7 @@ Built using RESTful API principles, the system is powered by TypeScript, Express
 |--------|------------------------|-------------------------|
 | POST   | `/auth/register`      | Register a new user     |
 | POST   | `/auth/login`         | Login and receive token |
+| POST   | `/auth/logout`        | Logout and remove token |
 
 ---
 

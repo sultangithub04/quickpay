@@ -1,16 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express"
 import httpStatus from "http-status-codes"
-import { JwtPayload } from "jsonwebtoken"
-import { envVars } from "../../config/env"
 import AppError from "../../errorHelpers/AppError"
 import { catchAsync } from "../../utils/catchAsync"
 import { sendResponse } from "../../utils/sendResponse"
-import { setAuthCookie } from "../../utils/setCookie"
-import { createUserTokens } from "../../utils/userTokens"
-import { AuthServices } from "./auth.service"
 import { adminServices } from "./admin.service"
-import { number } from "zod"
 import { User } from "../user/user.model"
 
 const getAllUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -85,11 +79,6 @@ const unBlockWallet = catchAsync(async (req: Request, res: Response, next: NextF
 })
 const aproveAgent = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    // const finduserId = await User.findOneAndUpdate({ phone: walletId })
-    // if (!finduserId) {
-    //     throw new AppError(404, "Wallet not found")
-    // }
-    // const userId= finduserId._id
     const getuser = await adminServices.aproveAgent(id)
     sendResponse(res, {
         success: true,

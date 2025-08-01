@@ -36,9 +36,7 @@ export const createNewAccessTokenWithRefreshToken = async (refreshToken: string)
     if (isUserExist.isActive === IsActive.BLOCKED || isUserExist.isActive === IsActive.INACTIVE) {
         throw new AppError(httpStatus.BAD_REQUEST, `User is ${isUserExist.isActive}`)
     }
-    if (isUserExist.isDeleted) {
-        throw new AppError(httpStatus.BAD_REQUEST, "User is deleted")
-    }
+  
 
     const jwtPayload = {
         userId: isUserExist._id,

@@ -38,9 +38,8 @@ const createTopUpMoney = async (userId:string, payload: Partial<ITransaction>) =
     status: "completed",
     fee: 0,
     commission: 0,
-  }, {
-
-  });
+  }
+);
 
 
     return {
@@ -82,9 +81,8 @@ const createWithdrawMoney = async (userId:string, payload: Partial<ITransaction>
     status: "completed",
     fee: 0,
     commission: 0,
-  }, {
-
-  });
+  }
+);
 
 
     return {
@@ -146,9 +144,8 @@ console.log(receiverUser);
     status: "completed",
     fee: 0,
     commission: 0,
-  }, {
-
-  });
+  }
+);
 
 
     return {
@@ -211,9 +208,8 @@ const receiverUser = await User.findOne({phone})
     status: "completed",
     fee: 0,
     commission: 0,
-  }, {
-
-  });
+  }
+);
 
 
     return {
@@ -310,9 +306,8 @@ const receiverUser = await User.findOne({phone})
     status: "completed",
     fee: 0,
     commission: 0,
-  }, {
-
-  });
+  }
+);
 
 
     return {

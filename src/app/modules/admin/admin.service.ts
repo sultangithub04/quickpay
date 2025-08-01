@@ -1,11 +1,11 @@
 import httpStatus from "http-status-codes";
 import AppError from "../../errorHelpers/AppError";
 import { Wallet } from "../wallet/wallet.model";
-import { ITransaction } from "./transaction.interface";
 import { User } from "../user/user.model";
 import { Transaction } from "../transaction/transaction.model";
 import { IsActive } from "../user/user.interface";
-import { number } from "zod";
+import { Types } from "mongoose";
+
 
 
 const getUserHistory = async (userId: string) => {
@@ -46,17 +46,17 @@ const getTransactionHistory = async (userId: string) => {
     const TotalTransaction = await Transaction.countDocuments()
     return { transactions, TotalTransaction }
 }
-const blockWallet = async (userId: number) => {
+const blockWallet = async (userId: Types.ObjectId) => {
     const wallet = await Wallet.findOneAndUpdate({user:userId}, { isBlocked: true }, { new: true });
     if (!wallet) throw new AppError(404, "Wallet not found");
     return wallet
 }
-const unBlockWallet = async (userId: number) => {
+const unBlockWallet = async (userId: Types.ObjectId) => {
     const wallet = await Wallet.findOneAndUpdate({user:userId}, { isBlocked: false  }, { new: true });
     if (!wallet) throw new AppError(404, "Wallet not found");
     return wallet
 }
-const aproveAgent = async (userId: number) => {
+const aproveAgent = async (userId: string) => {
     const wallet = await User.findOneAndUpdate({phone:userId}, { isActive: IsActive.ACTIVE }, { new: true });
     if (!wallet) throw new AppError(404, "Wallet not found");
     return wallet

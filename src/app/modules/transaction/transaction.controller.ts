@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express"
 import { catchAsync } from "../../utils/catchAsync"
 import { sendResponse } from "../../utils/sendResponse"
@@ -6,6 +7,7 @@ import { TransactionServices } from "./transaction.service";
 
 
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const topUpMoney = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userid = req.user?.userId
     const payload = req.body
@@ -17,7 +19,7 @@ const topUpMoney = catchAsync(async (req: Request, res: Response, next: NextFunc
         data: user,
     })
 })
-const withdrawMoney = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+const withdrawMoney = catchAsync(async (req: Request, res: Response) => {
     const userid = req.user?.userId
     const payload = req.body
     const user = await TransactionServices.createWithdrawMoney(userid, payload)
@@ -28,7 +30,7 @@ const withdrawMoney = catchAsync(async (req: Request, res: Response, next: NextF
         data: user,
     })
 })
-const sendMoney = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+const sendMoney = catchAsync(async (req: Request, res: Response) => {
     const userid = req.user?.userId
     const payload = req.body
     const user = await TransactionServices.createSendMoney(userid, payload)
@@ -39,7 +41,7 @@ const sendMoney = catchAsync(async (req: Request, res: Response, next: NextFunct
         data: user,
     })
 })
-const cashIn = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+const cashIn = catchAsync(async (req: Request, res: Response) => {
     const userid = req.user?.userId
     const payload = req.body
     const user = await TransactionServices.createCashIn(userid, payload)
@@ -50,7 +52,7 @@ const cashIn = catchAsync(async (req: Request, res: Response, next: NextFunction
         data: user,
     })
 })
-const cashOut = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+const cashOut = catchAsync(async (req: Request, res: Response) => {
     const userid = req.user?.userId
     const payload = req.body
     const user = await TransactionServices.createCashout(userid, payload)
@@ -61,7 +63,7 @@ const cashOut = catchAsync(async (req: Request, res: Response, next: NextFunctio
         data: user,
     })
 })
-const transactionHistory = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+const transactionHistory = catchAsync(async (req: Request, res: Response) => {
     const userid = req.user?.userId 
     const user = await TransactionServices.createHistory(userid)
     sendResponse(res, {

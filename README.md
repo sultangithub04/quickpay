@@ -1,127 +1,153 @@
-# 💰 Digital Wallet System
+# 💸 QuickPay – Digital Wallet System
 
-A secure and scalable digital wallet system that supports user registration, authentication, money transfers, top-ups, transaction history, admin management, and more.
-
----
-
-## 📘 Project Overview
-
-This digital wallet system allows users to:
-
-- Add funds (top-up)
-- Send money to other users
-- Withdraw (cash out)
-- View transaction history
-
-Admins can:
-
-- View all users, wallets, and transactions
-- Block/unblock wallets
-- Approve/suspend agents
-- Set transaction fees or system parameters
-
-Built using RESTful API principles, the system is powered by TypeScript, Express.js, and MongoDB.
+A robust agent-based digital wallet system that enables users to **cash in**, **cash out**, **send money**, and **top up** balances, while giving **admin full control** over wallets, agents, and transaction parameters like commission and fee rates.
 
 ---
 
-## 🚀 Features
+## 🚀 Project Overview
 
-### 🧑‍💼 User Features
-- Register and login using phone number & password
-- JWT-based authentication
-- Top-up balance
-- Send money to others
-- View own transaction history (paginated)
+QuickPay is a wallet-based transaction platform built for sending, receiving, and managing digital funds between users and agents. The system supports real-time wallet updates, commission tracking, user management, and admin controls like blocking/unblocking wallets or adjusting system-level settings.
 
-### 🧑‍🔧 Admin Features
-- View all users/agents/wallets/transactions
-- Block or unblock wallets
-- Approve or suspend agents
-- Set global fees and parameters (e.g., commission)
+---
 
-### 💼 Wallet & Transaction Logic
-- Secure wallet balances
-- Validations: balance check, user existence, wallet block status
-- Automatic transaction record creation
-- Support for multiple transaction types (send, top-up, cash-out)
+## ✨ Features
+
+- 👤 User registration & login (via phone)
+- 🪙 Wallet top-up, cash-in, cash-out, send money
+- 📜 Transaction history
+- 💼 Agent approval/suspension
+- 🛡️ Admin controls over users, agents, wallets
+- 📈 Configurable fees, commissions, and minimum balance
+- 🔐 Role-based authorization (Admin, Agent, User)
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Technology     | Description                         |
-|----------------|-------------------------------------|
-| Node.js        | Server-side runtime                 |
-| Express.js     | Web framework                       |
-| TypeScript     | Typed JavaScript                    |
-| MongoDB        | NoSQL database                      |
-| Mongoose       | ODM for MongoDB                     |
-| Zod            | Schema validation                   |
-| JWT            | Authentication                      |
-| dotenv         | Environment variable management     |
+| Layer         | Technology                  |
+|---------------|-----------------------------|
+| Backend       | Node.js, Express.js         |
+| Database      | MongoDB + Mongoose          |
+| Auth & Roles  | JWT, Role-based middleware  |
+| Hosting       | Vercel                      |
+| API Testing   | Postman / Thunder Client    |
 
 ---
 
-## 📡 API Endpoints
+## 📌 API Endpoints
 
-### 🔐 Auth Routes
-| Method | Endpoint              | Description             |
-|--------|------------------------|-------------------------|
-| POST   | `/auth/register`      | Register a new user     |
-| POST   | `/auth/login`         | Login and receive token |
-| POST   | `/auth/logout`        | Logout and remove token |
-
----
-
-### 👤 User Routes
-| Method | Endpoint                   | Description                   |
-|--------|----------------------------|-------------------------------|
-| GET    | `/users/me`                | Get logged-in user info       |
-| PATCH  | `/users/update`            | Update user profile           |
+### 🔐 Auth
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/v1/auth/register` | Register new user |
+| `POST` | `/api/v1/auth/login`    | User login (phone + password) |
+| `POST` | `/api/v1/auth/logout`   | Logout and clear token |
 
 ---
 
-### 💳 Wallet Routes
-| Method | Endpoint                   | Description                            |
-|--------|----------------------------|----------------------------------------|
-| GET    | `/wallets/me`              | View logged-in user's wallet           |
+### 👤 User
 
-
----
-
-### 📄 Transaction Routes
-| Method | Endpoint                   | Description                          |
-|--------|----------------------------|--------------------------------------|
-| PATCH  | `/transactions/topup`      | Top-up balance                       |
-| PATCH  | `/transactions/withdraw`   | withdraw balance                     |
-| PATCH  | `/transactions/send`       | Send money to another user           |
-| PATCH  | `/transactions/cash-in`    | Cash in to  agent                    |
-| PATCH  | `/transactions/cash-out`   | Cash out from agent                  |
-| GET    | `/transactions/me`         | Get own transactions  info           |
----
-
-### 🛠️ Admin Routes
-| Method | Endpoint                           | Description                        |
-|--------|------------------------------------|------------------------------------|
-| GET    | `/admin/users`                     | View all users                     |
-| GET    | `/admin/agents`                    | View all agents                    |
-| GET    | `/admin/wallets`                   | View all wallets                   |
-| GET    | `/admin/transactions`              | View all transactions              |
-| PATCH  | `/admin/wallets/block/:walletId`   | Block a wallet                     |
-| PATCH  | `/admin/wallets/unblock/:walletId` | Unblock a wallet                   |
-| PATCH  | `/admin/agents/approve/:id`        | Approve an agent                   |
-| PATCH  | `/admin/system-settings`           | Set fees, commission, limits       |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET`  | `/api/v1/users/me`      | Get currently logged-in user's info |
+| `PATCH`| `/api/v1/users/update`  | Update name, email, phone, role |
 
 ---
 
+### 💰 Transactions
 
-## 🛡️ Security & Validation
-- JWT-based route protection
-- Role-based access control (ADMIN, AGENT, USER)
-- Input validation using `Zod`
-- Error handling middleware
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `PATCH` | `/api/v1/transactions/topup`     | Top up own wallet (admin only) |
+| `PATCH` | `/api/v1/transactions/withdraw`  | Withdraw from own wallet |
+| `PATCH` | `/api/v1/transactions/send`      | Send money to another user |
+| `PATCH` | `/api/v1/transactions/cash-in`   | Cash in (user → agent) |
+| `PATCH` | `/api/v1/transactions/cash-out`  | Cash out (agent → user) |
+| `GET`   | `/api/v1/transactions/me`        | View personal transaction history (paginated) |
 
 ---
+
+### 👛 Wallet
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET`  | `/api/v1/wallets/me`  | View logged-in user's wallet |
+
+---
+
+### 🛠️ Admin
+
+#### Users / Agents / Wallets / Transactions
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET`  | `/api/v1/admin/users`        | Get all users |
+| `GET`  | `/api/v1/admin/agents`       | Get all agents |
+| `GET`  | `/api/v1/admin/wallets`      | Get all wallets |
+| `GET`  | `/api/v1/admin/transactions` | Get all transactions |
+
+#### Control Actions
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `PATCH` | `/api/v1/admin/wallets/block/:phone`     | Block wallet by phone |
+| `PATCH` | `/api/v1/admin/wallets/unblock/:phone`   | Unblock wallet |
+| `PATCH` | `/api/v1/admin/agents/approve/:phone`    | Approve agent by phone |
+
+---
+
+### ⚙️ System Settings
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `PATCH` | `/api/v1/setting/setting` | Set system settings (fee, commission, min balance) |
+| `GET`   | `/api/v1/system/commission` | Get current system commission and fee settings |
+
+---
+
+## 🧪 Example Inputs
+
+### ✅ Register
+```json
+POST /api/v1/auth/register
+{
+  "name": "user9",
+  "email": "user1@example.com",
+  "phone": "01710000105",
+  "password": "12345678"
+}
+```
+✅ Login
+```json
+
+POST /api/v1/auth/login
+{
+  "phone": "01710000400",
+  "password": "12345678"
+}
+
+```
+✅ Send Money
+```json
+
+PATCH /api/v1/transactions/send
+{
+  "phone": "01710000469",
+  "amount": 500
+}
+✅ Set Admin Fees
+
+```json
+
+PATCH /api/v1/setting/setting
+{
+  "transactionFeeRate": 1.5,
+  "agentCommissionRate": 2,
+  "minBalance": 100
+}
+```
+📂 Deployment
+Live API Base URL:
+https://quickpay-sigma.vercel.app/api/v1
 
 ## 🧪 Running the Project
 
@@ -138,69 +164,4 @@ cp .env.example .env
 # Run in development mode
 npm run dev
 
-
 ```
-api:
-input:
-
-api get: https://quickpay-sigma.vercel.app/api/v1/users/me
-api patch: https://quickpay-sigma.vercel.app/api/v1/users/update
-{
-    "name": "user1",
-    "phone": "01710000109",
-    "email": "user1@example.com",
-    "role": "USER"
-}
-api post: https://quickpay-sigma.vercel.app/api/v1/auth/login
-{
-  "phone": "01710000400",
-  "password": "12345678"
-}
-api post: https://quickpay-sigma.vercel.app/api/v1/auth/register
-{
-  "name": "user9",
-  "email": "user1@example.com",
-  "phone":"01710000105",
-  "password": "12345678"
-
-}
-api post: https://quickpay-sigma.vercel.app/api/v1/auth/logout
-api patch: https://quickpay-sigma.vercel.app/api/v1/transactions/topup
-{
-  "amount": 50000
-}
-api patch: https://quickpay-sigma.vercel.app/api/v1/transactions/withdraw
-{
-  "amount": 500
-}
-api patch: https://quickpay-sigma.vercel.app/api/v1/transactions/send
-{
-    "phone":"01710000469",
-     "amount": 500
-}
-api patch: https://quickpay-sigma.vercel.app/api/v1/transactions/cash-in
-{
-    "phone":"01710000469",
-    "amount": 500
-}
-api patch: https://quickpay-sigma.vercel.app/api/v1/transactions/cash-out
-{
-    "phone":"01710000469",
-     "amount": 500
-}
-api get:https://quickpay-sigma.vercel.app/api/v1/transactions/me
-api get: https://quickpay-sigma.vercel.app/api/v1/admin/agents
-api get: https://quickpay-sigma.vercel.app/api/v1/admin/users
-api get: https://quickpay-sigma.vercel.app/api/v1/admin/wallets
-api get: https://quickpay-sigma.vercel.app/api/v1/admin/transactions
-api patch: https://quickpay-sigma.vercel.app/api/v1/admin/wallets/block/01750000461
-api patch: https://quickpay-sigma.vercel.app/api/v1/admin/wallets/unblock/01750000461
-api patch: https://quickpay-sigma.vercel.app/api/v1/admin/agents/approve/01750000461
-api get: https://quickpay-sigma.vercel.app/api/v1/system/commission
-api patch: https://quickpay-sigma.vercel.app/api/v1/setting/setting
-{
-  "transactionFeeRate": 1.5,
-  "agentCommissionRate": 2,
-  "minBalance": 100
-}
-api get: https://quickpay-sigma.vercel.app/api/v1/wallets/me

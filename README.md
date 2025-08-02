@@ -137,11 +137,12 @@ PATCH /api/v1/transactions/send
   "phone": "01710000469",
   "amount": 500
 }
+```
+
 ✅ Set Admin Fees
 
-
-
 PATCH /api/v1/setting/setting
+
 ```json
 {
   "transactionFeeRate": 1.5,
@@ -155,15 +156,20 @@ https://quickpay-sigma.vercel.app/api/v1
 
 ## 🧪 Running the Project
 
-```bash
+
 # Clone the repository
+```bash
 git clone https://github.com/Apollo-Level2-Web-Dev/B5A5.git
-
+```
 # Install dependencies
+```bash
 npm install
-
+```
 # Create  environment variables
+```bash
 cp .env.example .env
-
+```
 # Run in development mode
+```bash
 npm run dev
+```

@@ -7,6 +7,8 @@ const auth_routes_1 = require("../modules/auth/auth.routes");
 const transaction_routes_1 = require("../modules/transaction/transaction.routes");
 const admin_routes_1 = require("../modules/admin/admin.routes");
 const wallet_routes_1 = require("../modules/wallet/wallet.routes");
+const commission_routes_1 = require("../modules/commission/commission.routes");
+const system_route_1 = require("../modules/systemsettings/system.route");
 // import { AuthRoutes } from "../modules/auth/auth.route"
 // import { UserRoutes } from "../modules/user/user.route"
 exports.router = (0, express_1.Router)();
@@ -30,6 +32,14 @@ const moduleRoutes = [
     {
         path: "/wallets",
         route: wallet_routes_1.WalletRoutes
+    },
+    {
+        path: "/system",
+        route: commission_routes_1.CommissionRoutes
+    },
+    {
+        path: "/setting",
+        route: system_route_1.SettingRoutes
     }
 ];
 moduleRoutes.forEach((route) => {

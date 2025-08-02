@@ -137,3 +137,70 @@ cp .env.example .env
 
 # Run in development mode
 npm run dev
+
+
+```
+api:
+input:
+
+api get: https://quickpay-sigma.vercel.app/api/v1/users/me
+api patch: https://quickpay-sigma.vercel.app/api/v1/users/update
+{
+    "name": "user1",
+    "phone": "01710000109",
+    "email": "user1@example.com",
+    "role": "USER"
+}
+api post: https://quickpay-sigma.vercel.app/api/v1/auth/login
+{
+  "phone": "01710000400",
+  "password": "12345678"
+}
+api post: https://quickpay-sigma.vercel.app/api/v1/auth/register
+{
+  "name": "user9",
+  "email": "user1@example.com",
+  "phone":"01710000105",
+  "password": "12345678"
+
+}
+api post: https://quickpay-sigma.vercel.app/api/v1/auth/logout
+api patch: https://quickpay-sigma.vercel.app/api/v1/transactions/topup
+{
+  "amount": 50000
+}
+api patch: https://quickpay-sigma.vercel.app/api/v1/transactions/withdraw
+{
+  "amount": 500
+}
+api patch: https://quickpay-sigma.vercel.app/api/v1/transactions/send
+{
+    "phone":"01710000469",
+     "amount": 500
+}
+api patch: https://quickpay-sigma.vercel.app/api/v1/transactions/cash-in
+{
+    "phone":"01710000469",
+    "amount": 500
+}
+api patch: https://quickpay-sigma.vercel.app/api/v1/transactions/cash-out
+{
+    "phone":"01710000469",
+     "amount": 500
+}
+api get:https://quickpay-sigma.vercel.app/api/v1/transactions/me
+api get: https://quickpay-sigma.vercel.app/api/v1/admin/agents
+api get: https://quickpay-sigma.vercel.app/api/v1/admin/users
+api get: https://quickpay-sigma.vercel.app/api/v1/admin/wallets
+api get: https://quickpay-sigma.vercel.app/api/v1/admin/transactions
+api patch: https://quickpay-sigma.vercel.app/api/v1/admin/wallets/block/01750000461
+api patch: https://quickpay-sigma.vercel.app/api/v1/admin/wallets/unblock/01750000461
+api patch: https://quickpay-sigma.vercel.app/api/v1/admin/agents/approve/01750000461
+api get: https://quickpay-sigma.vercel.app/api/v1/system/commission
+api patch: https://quickpay-sigma.vercel.app/api/v1/setting/setting
+{
+  "transactionFeeRate": 1.5,
+  "agentCommissionRate": 2,
+  "minBalance": 100
+}
+api get: https://quickpay-sigma.vercel.app/api/v1/wallets/me

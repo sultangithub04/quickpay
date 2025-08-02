@@ -18,6 +18,9 @@ const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
 const wallet_model_1 = require("../wallet/wallet.model");
 const user_model_1 = require("../user/user.model");
 const transaction_model_1 = require("./transaction.model");
+const user_interface_1 = require("../user/user.interface");
+const commission_model_1 = require("../commission/commission.model");
+const system_model_1 = require("../systemsettings/system.model");
 const createTopUpMoney = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     // 1. Check if user exists
     const user = yield user_model_1.User.findById(userId);
@@ -135,6 +138,59 @@ const createSendMoney = (userId, payload) => __awaiter(void 0, void 0, void 0, f
         newBalance: senderWallet.balance,
     };
 });
+// check crate function
+// const createCashIn = async (userId: string, payload: Partial<ITransaction>) => {
+//   // 1. Check if user exists
+//   const user = await User.findById(userId);
+//   if (!user) throw new AppError(httpStatus.NOT_FOUND, "User not found");
+//   // 2. Get sender wallet
+//   const senderWallet = await Wallet.findOne({ user: userId });
+//   if (!senderWallet) throw new AppError(httpStatus.NOT_FOUND, "Wallet not found");
+//   const { phone, amount } = payload;
+//   if (!amount || amount <= 0) throw new AppError(httpStatus.BAD_REQUEST, "Invalid amount");
+//   // 3. Find receiver user and wallet
+//   const receiverUser = await User.findOne({ phone });
+//   if (!receiverUser) throw new AppError(httpStatus.NOT_FOUND, "Receiver user not found");
+//   const receiverWallet = await Wallet.findOne({ user: receiverUser._id });
+//   if (!receiverWallet) throw new AppError(httpStatus.NOT_FOUND, "Receiver wallet not found");
+//   // 4. Get system settings (for commission rate)
+//   const systemSettings = await SystemSetting.findOne();
+//   if (!systemSettings) throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "System settings not found");
+//   const commissionAmount = (amount * systemSettings.agentCommissionRate) / 100;
+//   // 5. Update balances
+//   senderWallet.balance -= amount;
+//   receiverWallet.balance += amount;
+//   // ✅ Add commission to agent (if sender is agent)
+//   if (user.role === Role.AGENT) {
+//     senderWallet.balance += commissionAmount; // agent earns
+//   }
+//   await senderWallet.save();
+//   await receiverWallet.save();
+//   // 6. Record the transaction
+//   const transaction = await Transaction.create({
+//     type: "cash-in",
+//     amount,
+//     sender: user._id,
+//     receiver: receiverUser._id,
+//     initiatedBy: user._id,
+//     status: "completed",
+//     fee: 0,
+//     commission: commissionAmount,
+//   });
+//   // 7. Create commission entry if agent
+//   if (user.role === Role.AGENT) {
+//     await Commission.create({
+//       agent: user._id,
+//       transaction: transaction._id,
+//       amount: commissionAmount,
+//       createdAt: new Date(),
+//     });
+//   }
+//   return {
+//     transactionId: transaction._id,
+//     newBalance: senderWallet.balance,
+//   };
+// };
 const createCashIn = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     // 1. Check if user exists
     const user = yield user_model_1.User.findById(userId);
@@ -162,21 +218,104 @@ const createCashIn = (userId, payload) => __awaiter(void 0, void 0, void 0, func
     if (!amount || amount <= 0) {
         throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Invalid amount");
     }
+    // 4. Get system settings (for commission rate)
+    const systemSettings = yield system_model_1.SystemSetting.findOne();
+    if (!systemSettings)
+        throw new AppError_1.default(http_status_codes_1.default.INTERNAL_SERVER_ERROR, "System settings not found");
+    const commissionAmount = (amount * systemSettings.agentCommissionRate) / 100;
+    console.log(commissionAmount);
     senderWallet.balance -= amount;
     receiverWallet.balance += amount;
+    //  Add commission to agent (if sender is agent)
+    if (user.role === user_interface_1.Role.AGENT) {
+        senderWallet.balance += commissionAmount; // agent earns
+    }
     yield senderWallet.save();
     yield receiverWallet.save();
     // 5. Record the transaction
     const transaction = yield transaction_model_1.Transaction.create({
-        type: "send",
+        type: "cash_in",
         amount: amount,
         sender: user._id,
         receiver: receiverUser._id,
         initiatedBy: user._id,
         status: "completed",
         fee: 0,
-        commission: 0,
+        commission: commissionAmount,
     });
+    if (user.role === user_interface_1.Role.AGENT) {
+        yield commission_model_1.Commission.create({
+            agent: user._id,
+            transaction: transaction._id,
+            amount: commissionAmount,
+            createdAt: new Date(),
+        });
+    }
+    return {
+        transactionId: transaction._id,
+        newBalance: senderWallet.balance,
+    };
+});
+const createCashout = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    // 1. Check if user exists
+    const user = yield user_model_1.User.findById(userId);
+    // console.log(user);
+    if (!user) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "User not found");
+    }
+    // console.log("user", user);
+    // 2. Get the user's wallet
+    const senderWallet = yield wallet_model_1.Wallet.findOne({ user: userId });
+    // console.log("sender www",senderWallet);
+    if (!senderWallet) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Wallet not found");
+    }
+    const { phone, amount } = payload;
+    const receiverUser = yield user_model_1.User.findOne({ phone });
+    if (!receiverUser) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Receiver user not found");
+    }
+    const receiverWallet = yield wallet_model_1.Wallet.findOne({ user: receiverUser._id });
+    if (!receiverWallet) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Receiver wallet not found");
+    }
+    // 3. Validate amount
+    if (!amount || amount <= 0) {
+        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Invalid amount");
+    }
+    // 4. Get system settings (for commission rate)
+    const systemSettings = yield system_model_1.SystemSetting.findOne();
+    if (!systemSettings)
+        throw new AppError_1.default(http_status_codes_1.default.INTERNAL_SERVER_ERROR, "System settings not found");
+    const commissionAmount = (amount * systemSettings.agentCommissionRate) / 100;
+    console.log(commissionAmount);
+    senderWallet.balance += amount;
+    receiverWallet.balance -= amount;
+    //  Add commission to agent (if sender is agent)
+    if (user.role === user_interface_1.Role.AGENT) {
+        senderWallet.balance += commissionAmount; // agent earns
+    }
+    yield senderWallet.save();
+    yield receiverWallet.save();
+    // 5. Record the transaction
+    const transaction = yield transaction_model_1.Transaction.create({
+        type: "cash_in",
+        amount: amount,
+        sender: user._id,
+        receiver: receiverUser._id,
+        initiatedBy: user._id,
+        status: "completed",
+        fee: 0,
+        commission: commissionAmount,
+    });
+    if (user.role === user_interface_1.Role.AGENT) {
+        yield commission_model_1.Commission.create({
+            agent: user._id,
+            transaction: transaction._id,
+            amount: commissionAmount,
+            createdAt: new Date(),
+        });
+    }
     return {
         transactionId: transaction._id,
         newBalance: senderWallet.balance,
@@ -209,53 +348,6 @@ const createHistory = (userId) => __awaiter(void 0, void 0, void 0, function* ()
         .exec();
     const total = yield transaction_model_1.Transaction.countDocuments(filter);
     return { transactions, total };
-});
-const createCashout = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    // 1. Check if user exists
-    const user = yield user_model_1.User.findById(userId);
-    // console.log(user);
-    if (!user) {
-        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "User not found");
-    }
-    // console.log("user", user);
-    // 2. Get the user's wallet
-    const senderWallet = yield wallet_model_1.Wallet.findOne({ user: userId });
-    // console.log("sender www",senderWallet);
-    if (!senderWallet) {
-        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Wallet not found");
-    }
-    const { phone, amount } = payload;
-    const receiverUser = yield user_model_1.User.findOne({ phone });
-    if (!receiverUser) {
-        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Receiver user not found");
-    }
-    const receiverWallet = yield wallet_model_1.Wallet.findOne({ user: receiverUser._id });
-    if (!receiverWallet) {
-        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Receiver wallet not found");
-    }
-    // 3. Validate amount
-    if (!amount || amount <= 0) {
-        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Invalid amount");
-    }
-    senderWallet.balance += amount;
-    receiverWallet.balance -= amount;
-    yield senderWallet.save();
-    yield receiverWallet.save();
-    // 5. Record the transaction
-    const transaction = yield transaction_model_1.Transaction.create({
-        type: "send",
-        amount: amount,
-        sender: user._id,
-        receiver: receiverUser._id,
-        initiatedBy: user._id,
-        status: "completed",
-        fee: 0,
-        commission: 0,
-    });
-    return {
-        transactionId: transaction._id,
-        newBalance: senderWallet.balance,
-    };
 });
 exports.TransactionServices = {
     createTopUpMoney, createWithdrawMoney, createSendMoney, createCashIn, createCashout, createHistory

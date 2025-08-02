@@ -42,5 +42,6 @@ const TransactionSchema = new mongoose_1.Schema({
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
+    versionKey: false
 });
 exports.Transaction = (0, mongoose_1.model)('Transaction', TransactionSchema);

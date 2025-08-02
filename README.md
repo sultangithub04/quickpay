@@ -108,7 +108,7 @@ QuickPay is a wallet-based transaction platform built for sending, receiving, an
 
 ### ✅ Register
 
-# one phone number create one mobile account and number must 11 digit and bangladeshi mobile number 
+One phone number create one mobile account and number must 11 digit and bangladeshi mobile number 
 
 POST /api/v1/auth/register
 

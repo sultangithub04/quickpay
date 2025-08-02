@@ -152,7 +152,7 @@ PATCH /api/v1/setting/setting
 ```
 📂 Deployment
 Live API Base URL:
-https://quickpay-sigma.vercel.app/api/v1
+https://quickpay-sigma.vercel.app
 
 ## 🧪 Running the Project
 

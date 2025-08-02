@@ -107,8 +107,9 @@ QuickPay is a wallet-based transaction platform built for sending, receiving, an
 ## 🧪 Example Inputs
 
 ### ✅ Register
-```json
+
 POST /api/v1/auth/register
+```json
 {
   "name": "user9",
   "email": "user1@example.com",
@@ -117,9 +118,10 @@ POST /api/v1/auth/register
 }
 ```
 ✅ Login
-```json
+
 
 POST /api/v1/auth/login
+```json
 {
   "phone": "01710000400",
   "password": "12345678"
@@ -127,18 +129,20 @@ POST /api/v1/auth/login
 
 ```
 ✅ Send Money
-```json
+
 
 PATCH /api/v1/transactions/send
+```json
 {
   "phone": "01710000469",
   "amount": 500
 }
 ✅ Set Admin Fees
 
-```json
+
 
 PATCH /api/v1/setting/setting
+```json
 {
   "transactionFeeRate": 1.5,
   "agentCommissionRate": 2,
@@ -163,5 +167,3 @@ cp .env.example .env
 
 # Run in development mode
 npm run dev
-
-```

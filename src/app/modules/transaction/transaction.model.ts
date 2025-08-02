@@ -47,6 +47,7 @@ const TransactionSchema = new Schema<ITransaction>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
+    versionKey: false
   }
 );
 

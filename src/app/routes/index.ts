@@ -4,6 +4,9 @@ import { AuthRoutes } from "../modules/auth/auth.routes"
 import { TransactionRoutes } from "../modules/transaction/transaction.routes"
 import { AdminRoute } from "../modules/admin/admin.routes"
 import { WalletRoutes } from "../modules/wallet/wallet.routes"
+import { CommissionRoutes, SystemSettingsRoutes } from "../modules/commission/commission.routes"
+import { SettingRoutes } from "../modules/systemsettings/system.route"
+
 // import { AuthRoutes } from "../modules/auth/auth.route"
 // import { UserRoutes } from "../modules/user/user.route"
 
@@ -29,6 +32,14 @@ const moduleRoutes = [
     {
         path: "/wallets",
         route: WalletRoutes
+    },
+    {
+        path: "/system",
+        route: CommissionRoutes
+    },
+    {
+        path: "/setting",
+        route: SettingRoutes
     }
 
 ]

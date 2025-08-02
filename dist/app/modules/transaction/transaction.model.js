@@ -3,9 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Transaction = void 0;
 const mongoose_1 = require("mongoose");
 const TransactionSchema = new mongoose_1.Schema({
-    _id: {
-        type: String
-    },
     type: {
         type: String,
         enum: ['add_money', 'withdraw', 'send', 'cash_in', 'cash_out']

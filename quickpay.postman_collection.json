@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "3a706eee-2fa6-4e77-a55f-17d6d2c73a75",
 		"name": "quickpay",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "41712024"
 	},
 	"item": [
@@ -10,7 +10,15 @@
 			"name": "user",
 			"item": [
 				{
-					"name": "creatuser",
+					"name": "me",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "updateUser",
 					"request": {
 						"method": "GET",
 						"header": []
@@ -36,20 +44,25 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:5000/api/v1/auth/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"v1",
-								"auth",
-								"login"
-							]
-						}
+						"url": "http://localhost:5000/api/v1/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"user1\",\r\n  \"email\": \"user1@example.com\",\r\n  \"phone\":\"01710000101\",\r\n  \"password\": \"12345678\",\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5000/api/v1/auth/register"
 					},
 					"response": []
 				},
@@ -58,20 +71,7 @@
 					"request": {
 						"method": "POST",
 						"header": [],
-						"url": {
-							"raw": "http://localhost:5000/api/v1/auth/logout",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"v1",
-								"auth",
-								"logout"
-							]
-						}
+						"url": "http://localhost:5000/api/v1/auth/logout"
 					},
 					"response": []
 				}
@@ -116,20 +116,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:5000/api/v1/transactions/send",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"v1",
-								"transactions",
-								"send"
-							]
-						}
+						"url": "http://localhost:5000/api/v1/transactions/send"
 					},
 					"response": []
 				},
@@ -153,20 +140,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:5000/api/v1/transactions/send",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"v1",
-								"transactions",
-								"send"
-							]
-						}
+						"url": "http://localhost:5000/api/v1/transactions/send"
 					},
 					"response": []
 				},
@@ -190,31 +164,21 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:5000/api/v1/transactions/cash-out",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"v1",
-								"transactions",
-								"cash-out"
-							]
-						}
+						"url": "http://localhost:5000/api/v1/transactions/cash-out"
 					},
 					"response": []
 				},
 				{
 					"name": "Transaciton history",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "PATCH",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjM2RlYWY1NjVhNTg1MGJlMTY5MzMiLCJlbWFpbCI6ImpvaG40QGV4YW1wbGUuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTQwMjEzNjgsImV4cCI6MTc1NDEwNzc2OH0.PUJH8wfuas2QuSgDyCo2kfjQuwZeTEIsJwS7FRGlJzY",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjMzljZDgwYzA1YTJjYmMzYjVhODAiLCJlbWFpbCI6ImpvaG40QGV4YW1wbGUuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTQwMzcyNzYsImV4cCI6MTc1NDEyMzY3Nn0.seyZFBj_1OiFU4-l0KwAQntmvax_CUOXGhMmjWcIw44",
 								"type": "text"
 							}
 						],
@@ -227,20 +191,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:5000/api/v1/transactions/cash-out",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"v1",
-								"transactions",
-								"cash-out"
-							]
-						}
+						"url": "http://localhost:5000/api/v1/transactions/me"
 					},
 					"response": []
 				}
@@ -286,21 +237,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "http://localhost:5000/api/v1/admin/block/01750000461",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"v1",
-								"admin",
-								"block",
-								"01750000461"
-							]
-						}
+						"url": "http://localhost:5000/api/v1/admin/block/01750000461"
 					},
 					"response": []
 				},
@@ -309,21 +246,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "http://localhost:5000/api/v1/admin/block/01750000461",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"v1",
-								"admin",
-								"block",
-								"01750000461"
-							]
-						}
+						"url": "http://localhost:5000/api/v1/admin/block/01750000461"
 					},
 					"response": []
 				},
@@ -338,22 +261,52 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "http://localhost:5000/api/v1/admin/agents/approve/01750000461",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"v1",
-								"admin",
-								"agents",
-								"approve",
-								"01750000461"
-							]
-						}
+						"url": "http://localhost:5000/api/v1/admin/agents/approve/01750000461"
+					},
+					"response": []
+				},
+				{
+					"name": "systemSettings",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "settings",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODhjOTU3ZmRlN2Y1M2I1YjJjZjQ0NGEiLCJlbWFpbCI6ImFnZW50QGV4YW1wbGUuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU0MTA3OTEyLCJleHAiOjE3NTQxOTQzMTJ9.eDjUZIQdAeWtE1VNYTQwTFW4tFgf4RC5k4i-ULgwANM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"transactionFeeRate\": 1.5,\r\n  \"agentCommissionRate\": 2,\r\n  \"minBalance\": 100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:5000/api/v1/setting/setting"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Wallet",
+			"item": [
+				{
+					"name": "get wallet",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}

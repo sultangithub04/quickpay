@@ -103,7 +103,7 @@ const createSendMoney = (userId, payload) => __awaiter(void 0, void 0, void 0, f
     }
     const { phone, amount } = payload;
     const receiverUser = yield user_model_1.User.findOne({ phone });
-    console.log(receiverUser);
+    // console.log(receiverUser);
     if (!receiverUser) {
         throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Receiver user not found");
     }
@@ -138,7 +138,7 @@ const createSendMoney = (userId, payload) => __awaiter(void 0, void 0, void 0, f
 const createCashIn = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     // 1. Check if user exists
     const user = yield user_model_1.User.findById(userId);
-    console.log(user);
+    // console.log(user);
     if (!user) {
         throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "User not found");
     }
@@ -213,7 +213,7 @@ const createHistory = (userId) => __awaiter(void 0, void 0, void 0, function* ()
 const createCashout = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     // 1. Check if user exists
     const user = yield user_model_1.User.findById(userId);
-    console.log(user);
+    // console.log(user);
     if (!user) {
         throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "User not found");
     }

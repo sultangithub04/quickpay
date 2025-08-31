@@ -1,4 +1,4 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 import { ICommission } from "./commission.interface";
 
 const commissionSchema = new Schema<ICommission>(

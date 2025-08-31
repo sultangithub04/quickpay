@@ -14,6 +14,7 @@ export const createUserZodSchema = z.object({
     role: z.enum(Object.values(Role) as [string]).optional(),
     isActive:z.enum(Object.values(IsActive) as [string]).optional(),
     isApproved: z.boolean().optional(),
+    isVerify: z.boolean().optional(),
 })
 
 

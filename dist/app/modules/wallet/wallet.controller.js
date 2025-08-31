@@ -18,8 +18,7 @@ const sendResponse_1 = require("../../utils/sendResponse");
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const wallet_service_1 = require("./wallet.service");
 const getWalletInfo = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const userid = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+    const userid = req.user.userId;
     const user = yield wallet_service_1.walletServices.getWallet(userid);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,

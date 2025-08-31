@@ -7,7 +7,7 @@ import { Role } from "../user/user.interface";
 
 const router = Router();
 
-router.get("/commission",checkAuth(Role.ADMIN) , commission.getCommmission)
+router.get("/commission",checkAuth(Role.AGENT) , commission.getCommmission)
 
 
 

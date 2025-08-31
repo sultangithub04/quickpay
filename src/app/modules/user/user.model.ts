@@ -14,6 +14,7 @@ const userSchema = new Schema<IUser>({
     address: { type: String },
     isActive: { type: String, enum: Object.values(IsActive), default: IsActive.ACTIVE },
     isApproved: { type: Boolean, default: true },
+    isVerify:{ type: Boolean, default: false },
 
 }, {
     timestamps: true,

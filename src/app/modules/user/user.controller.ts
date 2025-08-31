@@ -6,7 +6,7 @@ import httpStatus from "http-status-codes";
 import { UserServices } from "./user.service";
 
 const getUserInfo = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const userid = req.user?.userId
+   const userid = (req.user as { userId: string }).userId;
     const user = await UserServices.getUser(userid)
 
     sendResponse(res, {
@@ -18,7 +18,7 @@ const getUserInfo = catchAsync(async (req: Request, res: Response, next: NextFun
 })
 
 const updateUserInfo = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const userid = req.user?.userId
+   const userid = (req.user as { userId: string }).userId;
     const payload= req.body
     const user = await UserServices.updateUser(userid, payload)
 
@@ -29,9 +29,20 @@ const updateUserInfo = catchAsync(async (req: Request, res: Response, next: Next
         data: user,
     })
 })
+const sendMail = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const payload= req.body
+    const user = await UserServices.sendMailService(payload)
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "Send Mail Successfully",
+        data: user,
+    })
+})
 
 
 
 export const UserControllers = {
-    getUserInfo,updateUserInfo
+    getUserInfo,updateUserInfo, sendMail
 }

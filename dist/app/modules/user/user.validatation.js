@@ -19,4 +19,5 @@ exports.createUserZodSchema = zod_1.default.object({
     role: zod_1.default.enum(Object.values(user_interface_1.Role)).optional(),
     isActive: zod_1.default.enum(Object.values(user_interface_1.IsActive)).optional(),
     isApproved: zod_1.default.boolean().optional(),
+    isVerify: zod_1.default.boolean().optional(),
 });

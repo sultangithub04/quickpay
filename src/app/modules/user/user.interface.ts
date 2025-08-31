@@ -23,4 +23,5 @@ export interface IUser {
     role: Role
     isActive?: IsActive;     
     isApproved?: boolean;     
+    isVerify?: boolean;     
 }

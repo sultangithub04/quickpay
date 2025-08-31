@@ -32,6 +32,8 @@ const userTokens_1 = require("../../utils/userTokens");
 const user_model_1 = require("../user/user.model");
 const wallet_model_1 = require("../wallet/wallet.model");
 const env_1 = require("../../config/env");
+const sendEmail_1 = require("../../utils/sendEmail");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (payload.role === "ADMIN") {
         throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Unathorioze  Access");
@@ -50,26 +52,67 @@ const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     });
     return { user, wallet };
 });
-const credentialsLogin = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const { phone, password } = payload;
+// const credentialsLogin = async (payload: Partial<IUser>) => {
+//     const { phone, password } = payload;
+//     const isUserExist = await User.findOne({ phone })
+//     if (!isUserExist) {
+//         throw new AppError(httpStatus.BAD_REQUEST, "user does not exist")
+//     }
+//     const isPasswordMatched = await bcryptjs.compare(password as string, isUserExist.password as string)
+//     if (!isPasswordMatched) {
+//         throw new AppError(httpStatus.BAD_REQUEST, "Incorrect Password")
+//     }
+//     const userTokens = createUserTokens(isUserExist)
+//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//     const { password: pass, ...rest } = isUserExist.toObject()
+//     return {
+//         accessToken: userTokens.accessToken,
+//         refreshToken: userTokens.refreshToken,
+//         user: rest
+//     }
+// }
+const getNewAccessToken = (refreshToken) => __awaiter(void 0, void 0, void 0, function* () {
+    const newAccessToken = yield (0, userTokens_1.createNewAccessTokenWithRefreshToken)(refreshToken);
+    return {
+        accessToken: newAccessToken
+    };
+});
+const forgotPassword = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    const isUserExist = yield user_model_1.User.findOne({ email });
+    if (!isUserExist) {
+        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "User does not exist");
+    }
+    const jwtPayload = {
+        userId: isUserExist._id,
+        email: isUserExist.email,
+        role: isUserExist.role
+    };
+    const resetToken = jsonwebtoken_1.default.sign(jwtPayload, env_1.envVars.JWT_ACCESS_SECRET, {
+        expiresIn: "10m"
+    });
+    const resetUILink = `${env_1.envVars.FRONTEND_URL}/reset-password?id=${isUserExist._id}&token=${resetToken}`;
+    (0, sendEmail_1.sendEmail)({
+        to: isUserExist.email,
+        subject: "Password Reset",
+        templateName: "forgetPassword",
+        templateData: {
+            name: isUserExist.name,
+            resetUILink
+        }
+    });
+    /**
+     * http://localhost:5173/reset-password?id=687f310c724151eb2fcf0c41&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODdmMzEwYzcyNDE1MWViMmZjZjBjNDEiLCJlbWFpbCI6InNhbWluaXNyYXI2QGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzUzMTY2MTM3LCJleHAiOjE3NTMxNjY3Mzd9.LQgXBmyBpEPpAQyPjDNPL4m2xLF4XomfUPfoxeG0MKg
+     */
+});
+const getEmail = (phone) => __awaiter(void 0, void 0, void 0, function* () {
     const isUserExist = yield user_model_1.User.findOne({ phone });
     if (!isUserExist) {
-        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "user does not exist");
+        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "User does not exist");
     }
-    const isPasswordMatched = yield bcryptjs_1.default.compare(password, isUserExist.password);
-    if (!isPasswordMatched) {
-        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Incorrect Password");
-    }
-    const userTokens = (0, userTokens_1.createUserTokens)(isUserExist);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _a = isUserExist.toObject(), { password: pass } = _a, rest = __rest(_a, ["password"]);
-    return {
-        accessToken: userTokens.accessToken,
-        refreshToken: userTokens.refreshToken,
-        user: rest
-    };
+    return isUserExist.email;
 });
 exports.AuthServices = {
     createUser,
-    credentialsLogin,
+    // credentialsLogin,
+    getNewAccessToken, forgotPassword, getEmail
 };

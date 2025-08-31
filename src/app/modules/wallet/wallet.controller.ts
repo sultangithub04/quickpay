@@ -7,7 +7,7 @@ import { walletServices } from "./wallet.service";
 
 
 const getWalletInfo = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const userid = req.user?.userId
+    const userid = (req.user as { userId: string }).userId;
     const user = await walletServices.getWallet(userid)
 
     sendResponse(res, {

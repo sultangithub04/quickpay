@@ -2,6 +2,9 @@ import { User } from "./user.model";
 import httpStatus from "http-status-codes";
 import AppError from "../../errorHelpers/AppError";
 import { IUser, Role } from "./user.interface";
+import { sendEmail, SendEmailOptions } from "../../utils/sendEmail";
+import { envVars } from "../../config/env";
+import bcryptjs from "bcryptjs";
 
 const getUser = async (userId: string) => {
 
@@ -15,9 +18,13 @@ const getUser = async (userId: string) => {
 }
 
 const updateUser = async (userId: string, payload: Partial<IUser>) => {
-    const { phone, ...rest } = payload
+    const { name, email, password: pass } = payload
+
+    const password = await bcryptjs.hash(pass as string, Number(envVars.BCRYPT_SALT_ROUND))
+
+    const rest = { name, email, password }
     const ifUserExist = await User.findById(userId);
-    console.log(phone);
+    console.log("check", rest);
     if (!ifUserExist) {
         throw new AppError(httpStatus.NOT_FOUND, "User Not Found")
     }
@@ -29,6 +36,46 @@ const updateUser = async (userId: string, payload: Partial<IUser>) => {
 
     return newUpdatedUser
 }
+// const sendMailService = async (payload: SendEmailOptions) => {
+//     const { name, email: to, message } = payload
+//     const templateName = "query"
+//     const subject = "queary from Customer"
+//     const templateData = {
+//         name: name,
+//         massage: message
+//     }
+
+
+//     const result = await sendEmail({
+//         to,
+//         subject,
+//         templateName,
+//         templateData,
+//     });
+//     return result
+// }
+// ১. Payload type
+interface SendMailPayload {
+    name: string;
+    email: string;
+    message: string;
+}
+const sendMailService = async (payload: SendMailPayload): Promise<void> => {
+    const { name, email: to, message } = payload;
+    const templateName = "query";
+    const subject = "query from Customer";
+    const templateData = {
+        name,
+        message,
+    };
+
+    await sendEmail({
+        to,
+        subject,
+        templateName,
+        templateData,
+    });
+};
 export const UserServices = {
-    getUser, updateUser
+    getUser, updateUser, sendMailService
 }

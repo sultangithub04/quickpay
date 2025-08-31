@@ -16,6 +16,7 @@ const userSchema = new mongoose_1.Schema({
     address: { type: String },
     isActive: { type: String, enum: Object.values(user_interface_1.IsActive), default: user_interface_1.IsActive.ACTIVE },
     isApproved: { type: Boolean, default: true },
+    isVerify: { type: Boolean, default: false },
 }, {
     timestamps: true,
     versionKey: false

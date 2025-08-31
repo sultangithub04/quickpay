@@ -7,8 +7,18 @@ import { sendResponse } from "../../utils/sendResponse"
 import { adminServices } from "./admin.service"
 import { User } from "../user/user.model"
 
+const overView = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const userid = (req.user as { userId: string }).userId;
+    const getuser = await adminServices.getOverView(userid)
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Overview get Successfully",
+        data: getuser,
+    })
+})
 const getAllUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const userid = req.user?.userId
+    const userid = (req.user as { userId: string }).userId;
     const getuser = await adminServices.getUserHistory(userid)
     sendResponse(res, {
         success: true,
@@ -18,7 +28,9 @@ const getAllUser = catchAsync(async (req: Request, res: Response, next: NextFunc
     })
 })
 const getAllAgent = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const userid = req.user?.userId
+    // const userid = (req.user as { userId: string }).userId;
+    // const userid = (req.user as { userId: string }).userId;
+    const userid = (req.user as { userId: string }).userId;
     const getuser = await adminServices.getAgentHistory(userid)
     sendResponse(res, {
         success: true,
@@ -28,7 +40,7 @@ const getAllAgent = catchAsync(async (req: Request, res: Response, next: NextFun
     })
 })
 const getAllWallet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const userid = req.user?.userId
+    const userid = (req.user as { userId: string }).userId;
     const getuser = await adminServices.getWalletHistory(userid)
     sendResponse(res, {
         success: true,
@@ -37,23 +49,49 @@ const getAllWallet = catchAsync(async (req: Request, res: Response, next: NextFu
         data: getuser,
     })
 })
-const getAllTransaction = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const userid = req.user?.userId
-    const getuser = await adminServices.getTransactionHistory(userid)
+// const getAllTransaction = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//     const userid = (req.user as { userId: string }).userId;
+//     const page = parseInt(req.query.page as string) || 1;
+//     const limit = parseInt(req.query.limit as string) || 10;
+//     const getuser = await adminServices.getTransactionHistory(userid, page, limit)
+//     sendResponse(res, {
+//         success: true,
+//         statusCode: httpStatus.OK,
+//         message: "Transaction history get Successfully",
+//         data: getuser,
+//     })
+// })
+const getAllTransaction = catchAsync(async (req: Request, res: Response) => {
+    const userId = (req.user as { userId: string }).userId;;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const filters = {
+        category: req.query.category,
+        status: req.query.status,
+        minAmount: req.query.minAmount,
+        maxAmount: req.query.maxAmount,
+        search: req.query.search,
+    };
+
+    const getuser = await adminServices.getTransactionHistory(userId, page, limit, filters);
+
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
-        message: "All Wallet get Successfully",
+        message: "Transaction history fetched successfully",
         data: getuser,
-    })
-})
+    });
+});
+
+
 const blockWallet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { walletId } = req.params;
     const finduserId = await User.findOne({ phone: walletId })
     if (!finduserId) {
         throw new AppError(404, "Wallet not found")
     }
-    const userId= finduserId._id
+    const userId = finduserId._id
     const getuser = await adminServices.blockWallet(userId)
     sendResponse(res, {
         success: true,
@@ -68,7 +106,7 @@ const unBlockWallet = catchAsync(async (req: Request, res: Response, next: NextF
     if (!finduserId) {
         throw new AppError(404, "Wallet not found")
     }
-    const userId= finduserId._id
+    const userId = finduserId._id
     const getuser = await adminServices.unBlockWallet(userId)
     sendResponse(res, {
         success: true,
@@ -87,8 +125,18 @@ const aproveAgent = catchAsync(async (req: Request, res: Response, next: NextFun
         data: getuser,
     })
 })
+const deleteUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const getuser = await adminServices.deleteUserService(id)
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: " User Deleted Successfully",
+        data: getuser,
+    })
+})
 
 
 export const AdminControllers = {
-    getAllUser, getAllAgent, getAllWallet, getAllTransaction, blockWallet, unBlockWallet, aproveAgent
+    getAllUser, getAllAgent, getAllWallet, getAllTransaction, blockWallet, unBlockWallet, aproveAgent, deleteUser, overView
 }

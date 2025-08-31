@@ -9,6 +9,7 @@ const admin_routes_1 = require("../modules/admin/admin.routes");
 const wallet_routes_1 = require("../modules/wallet/wallet.routes");
 const commission_routes_1 = require("../modules/commission/commission.routes");
 const system_route_1 = require("../modules/systemsettings/system.route");
+const otp_route_1 = require("../modules/otp/otp.route");
 // import { AuthRoutes } from "../modules/auth/auth.route"
 // import { UserRoutes } from "../modules/user/user.route"
 exports.router = (0, express_1.Router)();
@@ -40,6 +41,10 @@ const moduleRoutes = [
     {
         path: "/setting",
         route: system_route_1.SettingRoutes
+    },
+    {
+        path: "/otp",
+        route: otp_route_1.OtpRoutes
     }
 ];
 moduleRoutes.forEach((route) => {

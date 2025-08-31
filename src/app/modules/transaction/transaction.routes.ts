@@ -14,6 +14,8 @@ router.patch("/withdraw",checkAuth(Role.USER), TransactionControllers.withdrawMo
 router.patch("/send",checkAuth(Role.USER), TransactionControllers.sendMoney)
 router.patch("/cash-in",checkAuth(Role.AGENT), TransactionControllers.cashIn)
 router.patch("/cash-out",checkAuth(Role.AGENT), TransactionControllers.cashOut)
+router.patch("/cash-out-user",checkAuth(Role.USER), TransactionControllers.cashOutuser)
+router.patch("/cash-in-user",checkAuth(Role.USER), TransactionControllers.cashInuser)
 router.get("/me",checkAuth(Role.AGENT, Role.USER, Role.ADMIN), TransactionControllers.transactionHistory)
 
 

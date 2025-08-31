@@ -1,8 +1,3 @@
-import bcryptjs from "bcryptjs";
-import httpStatus from "http-status-codes";
-import { JwtPayload } from "jsonwebtoken";
-import { envVars } from "../../config/env";
-import AppError from "../../errorHelpers/AppError";
 import { SystemSetting } from "./system.model";
 import { ISystemSettings } from "./system.interface";
 

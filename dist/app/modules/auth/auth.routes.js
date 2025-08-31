@@ -8,5 +8,8 @@ const user_validatation_1 = require("../user/user.validatation");
 const router = (0, express_1.Router)();
 router.post("/register", (0, validateRequest_1.validateRequest)(user_validatation_1.createUserZodSchema), auth_controller_1.AuthControllers.registerUser);
 router.post("/login", auth_controller_1.AuthControllers.credentialsLogin);
+router.post("/refresh", auth_controller_1.AuthControllers.getNewAccessToken);
 router.post("/logout", auth_controller_1.AuthControllers.logout);
+router.post("/forgot-password", auth_controller_1.AuthControllers.forgotPassword);
+router.get("/get-email", auth_controller_1.AuthControllers.getEmailbyPhone);
 exports.AuthRoutes = router;

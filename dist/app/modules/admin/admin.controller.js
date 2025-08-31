@@ -19,9 +19,18 @@ const catchAsync_1 = require("../../utils/catchAsync");
 const sendResponse_1 = require("../../utils/sendResponse");
 const admin_service_1 = require("./admin.service");
 const user_model_1 = require("../user/user.model");
+const overView = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const userid = req.user.userId;
+    const getuser = yield admin_service_1.adminServices.getOverView(userid);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.default.OK,
+        message: "Overview get Successfully",
+        data: getuser,
+    });
+}));
 const getAllUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const userid = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+    const userid = req.user.userId;
     const getuser = yield admin_service_1.adminServices.getUserHistory(userid);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
@@ -31,8 +40,9 @@ const getAllUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(vo
     });
 }));
 const getAllAgent = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const userid = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+    // const userid = (req.user as { userId: string }).userId;
+    // const userid = (req.user as { userId: string }).userId;
+    const userid = req.user.userId;
     const getuser = yield admin_service_1.adminServices.getAgentHistory(userid);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
@@ -42,8 +52,7 @@ const getAllAgent = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(v
     });
 }));
 const getAllWallet = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const userid = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+    const userid = req.user.userId;
     const getuser = yield admin_service_1.adminServices.getWalletHistory(userid);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
@@ -52,14 +61,35 @@ const getAllWallet = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(
         data: getuser,
     });
 }));
-const getAllTransaction = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const userid = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
-    const getuser = yield admin_service_1.adminServices.getTransactionHistory(userid);
+// const getAllTransaction = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//     const userid = (req.user as { userId: string }).userId;
+//     const page = parseInt(req.query.page as string) || 1;
+//     const limit = parseInt(req.query.limit as string) || 10;
+//     const getuser = await adminServices.getTransactionHistory(userid, page, limit)
+//     sendResponse(res, {
+//         success: true,
+//         statusCode: httpStatus.OK,
+//         message: "Transaction history get Successfully",
+//         data: getuser,
+//     })
+// })
+const getAllTransaction = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.user.userId;
+    ;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const filters = {
+        category: req.query.category,
+        status: req.query.status,
+        minAmount: req.query.minAmount,
+        maxAmount: req.query.maxAmount,
+        search: req.query.search,
+    };
+    const getuser = yield admin_service_1.adminServices.getTransactionHistory(userId, page, limit, filters);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: http_status_codes_1.default.OK,
-        message: "All Wallet get Successfully",
+        message: "Transaction history fetched successfully",
         data: getuser,
     });
 }));
@@ -103,6 +133,16 @@ const aproveAgent = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(v
         data: getuser,
     });
 }));
+const deleteUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const getuser = yield admin_service_1.adminServices.deleteUserService(id);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.default.OK,
+        message: " User Deleted Successfully",
+        data: getuser,
+    });
+}));
 exports.AdminControllers = {
-    getAllUser, getAllAgent, getAllWallet, getAllTransaction, blockWallet, unBlockWallet, aproveAgent
+    getAllUser, getAllAgent, getAllWallet, getAllTransaction, blockWallet, unBlockWallet, aproveAgent, deleteUser, overView
 };

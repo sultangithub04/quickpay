@@ -6,6 +6,7 @@ import { AdminRoute } from "../modules/admin/admin.routes"
 import { WalletRoutes } from "../modules/wallet/wallet.routes"
 import { CommissionRoutes } from "../modules/commission/commission.routes"
 import { SettingRoutes } from "../modules/systemsettings/system.route"
+import { OtpRoutes } from "../modules/otp/otp.route"
 
 // import { AuthRoutes } from "../modules/auth/auth.route"
 // import { UserRoutes } from "../modules/user/user.route"
@@ -40,6 +41,10 @@ const moduleRoutes = [
     {
         path: "/setting",
         route: SettingRoutes
+    },
+    {
+        path: "/otp",
+        route: OtpRoutes
     }
 
 ]

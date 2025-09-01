@@ -117,6 +117,7 @@ const unBlockWallet = catchAsync(async (req: Request, res: Response, next: NextF
 })
 const aproveAgent = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
+
     const getuser = await adminServices.aproveAgent(id)
     sendResponse(res, {
         success: true,

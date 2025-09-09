@@ -15,6 +15,8 @@ router.patch("/wallets/block/:walletId", checkAuth(Role.ADMIN), AdminControllers
 router.patch("/wallets/unblock/:walletId", checkAuth(Role.ADMIN), AdminControllers.unBlockWallet)
 router.patch("/agents/approve/:id", checkAuth(Role.ADMIN), AdminControllers.aproveAgent)
 router.delete("/delete/user/:id", checkAuth(Role.ADMIN), AdminControllers.deleteUser)
+router.patch("/status/:id", checkAuth(Role.ADMIN), AdminControllers.statusService)
+router.patch("/verify/:id", checkAuth(Role.ADMIN), AdminControllers.verifyService)
 // router.patch("/agents/approve/:id", AdminControllers.logout)
 // router.patch("/agents/suspend/:id", AdminControllers.logout)
 // router.patch("/system-settings", AdminControllers.logout)

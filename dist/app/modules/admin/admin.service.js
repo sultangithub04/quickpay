@@ -25,7 +25,7 @@ const getUserHistory = (userId) => __awaiter(void 0, void 0, void 0, function* (
     if (!user) {
         throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Admin not found");
     }
-    const users = yield user_model_1.User.find({ role: { $in: ["USER", "AGENT"] } });
+    const users = yield user_model_1.User.find({ role: { $in: ["USER"] } });
     const totalUser = yield user_model_1.User.countDocuments({ role: "USER" });
     const totalAgent = yield user_model_1.User.countDocuments({ role: "AGENT" });
     return { users, totalUser, totalAgent };
@@ -248,6 +248,17 @@ const unBlockWallet = (userId) => __awaiter(void 0, void 0, void 0, function* ()
         throw new AppError_1.default(404, "Wallet not found");
     return wallet;
 });
+const statusService = (userId, isActive) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield user_model_1.User.findOneAndUpdate({ phone: userId }, { isActive: isActive }, { new: true });
+    return result;
+});
+const verifyService = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    // const user = await User.findOne({ phone });
+    // const newStatus=!isVerify.
+    console.log(userId);
+    const result = yield user_model_1.User.findOneAndUpdate({ phone: userId }, { isVerify: true }, { new: true });
+    return result;
+});
 const aproveAgent = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     const wallet = yield user_model_1.User.findOneAndUpdate({ phone: userId }, { isActive: user_interface_1.IsActive.ACTIVE }, { new: true });
     if (!wallet)
@@ -281,6 +292,6 @@ const getOverView = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     return { totalUser, totalAgent, totaltransaction, totalVolume };
 });
 exports.adminServices = {
-    getUserHistory, getAgentHistory, getOverView,
+    getUserHistory, getAgentHistory, getOverView, statusService, verifyService,
     getWalletHistory, getTransactionHistory, blockWallet, unBlockWallet, aproveAgent, deleteUserService
 };

@@ -14,4 +14,5 @@ router.patch("/cash-out", (0, checkAuth_1.checkAuth)(user_interface_1.Role.AGENT
 router.patch("/cash-out-user", (0, checkAuth_1.checkAuth)(user_interface_1.Role.USER), transaction_controller_1.TransactionControllers.cashOutuser);
 router.patch("/cash-in-user", (0, checkAuth_1.checkAuth)(user_interface_1.Role.USER), transaction_controller_1.TransactionControllers.cashInuser);
 router.get("/me", (0, checkAuth_1.checkAuth)(user_interface_1.Role.AGENT, user_interface_1.Role.USER, user_interface_1.Role.ADMIN), transaction_controller_1.TransactionControllers.transactionHistory);
+router.get("/agent-transaction-history", (0, checkAuth_1.checkAuth)(user_interface_1.Role.AGENT, user_interface_1.Role.ADMIN, user_interface_1.Role.SUPER_ADMIN), transaction_controller_1.TransactionControllers.AgentTranHis);
 exports.TransactionRoutes = router;

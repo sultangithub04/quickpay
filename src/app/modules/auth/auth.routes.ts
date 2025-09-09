@@ -12,4 +12,5 @@ router.post("/logout", AuthControllers.logout)
 router.post("/forgot-password", AuthControllers.forgotPassword)
 router.get("/get-email", AuthControllers.getEmailbyPhone)
 
+
 export const AuthRoutes = router;

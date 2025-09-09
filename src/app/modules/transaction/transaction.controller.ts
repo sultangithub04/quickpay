@@ -97,10 +97,22 @@ const transactionHistory = catchAsync(async (req: Request, res: Response) => {
         data: user,
     })
 })
+const AgentTranHis = catchAsync(async (req: Request, res: Response) => {
+    const userid = (req.user as { userId: string }).userId;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const user = await TransactionServices.createAgentHistory(userid, page, limit)
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "Agent Transaction Histrory Get Successfully",
+        data: user,
+    })
+})
 
 
 
 
 export const TransactionControllers = {
-    topUpMoney, withdrawMoney, sendMoney, cashIn, cashOut, transactionHistory, cashOutuser,cashInuser
+    topUpMoney, withdrawMoney, sendMoney, cashIn, cashOut, transactionHistory, cashOutuser,cashInuser, AgentTranHis
 }

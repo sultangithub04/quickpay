@@ -14,4 +14,5 @@ router.patch("/update", checkAuth(Role.USER, Role.AGENT, Role.ADMIN),  UserContr
 router.post("/sendmail", UserControllers.sendMail);
 
 
+
 export const UserRoutes = router

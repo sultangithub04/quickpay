@@ -107,6 +107,18 @@ const transactionHistory = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(
         data: user,
     });
 }));
+const AgentTranHis = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userid = req.user.userId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const user = yield transaction_service_1.TransactionServices.createAgentHistory(userid, page, limit);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.default.CREATED,
+        message: "Agent Transaction Histrory Get Successfully",
+        data: user,
+    });
+}));
 exports.TransactionControllers = {
-    topUpMoney, withdrawMoney, sendMoney, cashIn, cashOut, transactionHistory, cashOutuser, cashInuser
+    topUpMoney, withdrawMoney, sendMoney, cashIn, cashOut, transactionHistory, cashOutuser, cashInuser, AgentTranHis
 };

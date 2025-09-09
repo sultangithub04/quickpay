@@ -299,7 +299,7 @@ const createCashout = (userId, payload) => __awaiter(void 0, void 0, void 0, fun
     yield receiverWallet.save();
     // 5. Record the transaction
     const transaction = yield transaction_model_1.Transaction.create({
-        type: "cash_in",
+        type: "cash_out",
         amount: amount,
         sender: user._id,
         receiver: receiverUser._id,
@@ -355,24 +355,63 @@ const createHistory = (userId_1, ...args_1) => __awaiter(void 0, [userId_1, ...a
     if (!user) {
         throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "User not found");
     }
-    // 2. Filter: Show transactions where user is sender, receiver, or initiatedBy
-    const filter = {
+    // 2. Get user wallet for opening balance
+    const wallet = yield wallet_model_1.Wallet.findOne({ user: userId });
+    if (!wallet) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Wallet not found");
+    }
+    // 3. Fetch ALL transactions (no pagination yet)
+    const allTransactions = yield transaction_model_1.Transaction.find({
         $or: [
             { sender: userId },
             { receiver: userId },
-            { initiatedBy: userId }
-        ]
-    };
-    // 3. Calculate skip
-    const skip = (page - 1) * limit;
-    // 4. Fetch transactions with pagination
-    const transactions = yield transaction_model_1.Transaction.find(filter)
-        .sort({ createdAt: -1 }) // latest first
-        .skip(skip)
-        .limit(limit)
-        .exec();
-    // 5. Get total count for pagination info
-    const total = yield transaction_model_1.Transaction.countDocuments(filter);
+            { initiatedBy: userId },
+        ],
+    })
+        .sort({ createdAt: 1 }) // oldest → newest
+        .lean();
+    // 4. Start running balance from 0 (or from earliest historical balance if you keep snapshots)
+    let runningBalance = 50;
+    const statementFull = allTransactions.map((tx) => {
+        let debit = 0;
+        let credit = 0;
+        if (tx.type === "cash_in" && String(tx.receiver) === userId) {
+            credit = tx.amount;
+            runningBalance += tx.amount;
+        }
+        else if (tx.type === "add_money" && String(tx.initiatedBy) === userId) {
+            credit = tx.amount;
+            runningBalance += tx.amount;
+        }
+        else if (tx.type === "cash_out" && String(tx.receiver || tx.initiatedBy) === userId || tx.sender) {
+            debit = tx.amount;
+            runningBalance -= tx.amount;
+        }
+        else if (tx.type === "withdraw" && String(tx.initiatedBy || tx.receiver || tx.sender) === userId) {
+            debit = tx.amount;
+            runningBalance -= tx.amount;
+        }
+        else if (tx.type === "send") {
+            if (String(tx.sender) === userId) {
+                debit = tx.amount;
+                runningBalance -= tx.amount;
+            }
+            else if (String(tx.receiver) === userId) {
+                credit = tx.amount;
+                runningBalance += tx.amount;
+            }
+        }
+        return {
+            date: tx.createdAt,
+            type: tx.type,
+            debit,
+            credit,
+            balance: runningBalance,
+        };
+    });
+    // 5. Paginate AFTER running balance is built
+    const total = statementFull.length;
+    const paginated = statementFull.slice((page - 1) * limit, page * limit);
     return {
         meta: {
             page,
@@ -380,9 +419,140 @@ const createHistory = (userId_1, ...args_1) => __awaiter(void 0, [userId_1, ...a
             total,
             totalPages: Math.ceil(total / limit),
         },
-        data: transactions,
+        data: paginated,
     };
 });
+const createAgentHistory = (userId_1, ...args_1) => __awaiter(void 0, [userId_1, ...args_1], void 0, function* (userId, page = 1, limit = 10) {
+    // 1. Check if user exists
+    const user = yield user_model_1.User.findById(userId);
+    if (!user) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Agent not found");
+    }
+    // 2. Get user wallet for opening balance
+    const wallet = yield wallet_model_1.Wallet.findOne({ user: userId });
+    if (!wallet) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Wallet not found");
+    }
+    // 3. Fetch ALL transactions (no pagination yet)
+    const allTransactions = yield transaction_model_1.Transaction.find({
+        $or: [
+            { sender: userId },
+            { receiver: userId },
+            { initiatedBy: userId },
+        ],
+    })
+        .sort({ createdAt: 1 }) // oldest → newest
+        .lean();
+    // 4. Start running balance from 0 (or from earliest historical balance if you keep snapshots)
+    let runningBalance = 50;
+    const statementFull = allTransactions.map((tx) => {
+        let debit = 0;
+        let credit = 0;
+        if (tx.type === "cash_out" && String(tx.initiatedBy) === userId) {
+            credit = tx.amount;
+            runningBalance += tx.amount;
+        }
+        else if (tx.type === "add_money" && String(tx.initiatedBy) === userId) {
+            debit = tx.amount;
+            runningBalance -= tx.amount;
+        }
+        else if (tx.type === "cash_in" && String(tx.receiver || tx.initiatedBy) === userId || tx.sender) {
+            debit = tx.amount;
+            runningBalance -= tx.amount;
+        }
+        else if (tx.type === "withdraw" && String(tx.initiatedBy || tx.receiver || tx.sender) === userId) {
+            debit = tx.amount;
+            runningBalance += tx.amount;
+        }
+        else if (tx.type === "send") {
+            if (String(tx.sender) === userId) {
+                debit = tx.amount;
+                runningBalance += tx.amount;
+            }
+            else if (String(tx.receiver) === userId) {
+                credit = tx.amount;
+                runningBalance -= tx.amount;
+            }
+        }
+        return {
+            date: tx.createdAt,
+            type: tx.type,
+            debit,
+            credit,
+            balance: runningBalance,
+        };
+    });
+    // 5. Paginate AFTER running balance is built
+    const total = statementFull.length;
+    const paginated = statementFull.slice((page - 1) * limit, page * limit);
+    return {
+        meta: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+        },
+        data: paginated,
+    };
+});
+// const createHistory = async (userId: string, page = 1, limit = 10) => {
+//   const uid = new Types.ObjectId(userId);
+//   // 1. Get wallet
+//   const wallet = await Wallet.findOne({ user: uid });
+//   if (!wallet) {
+//     throw new Error("Wallet not found for this user");
+//   }
+//   // 2. Get all transactions for the user (for balance history)
+//   const allTransactions = await Transaction.find({
+//     $or: [{ sender: uid }, { receiver: uid }, { initiatedBy: uid }],
+//   })
+//     .sort({ createdAt: 1 }) // oldest → newest (to calculate balance correctly)
+//     .lean();
+//   // 3. Start running balance from the first record
+//   let runningBalance = 50;
+//   const statementFull = allTransactions.map((tx) => {
+//     let debit = 0;
+//     let credit = 0;
+//     if (tx.type === "cash_in" && String(tx.receiver) === userId) {
+//       credit = tx.amount;
+//       runningBalance += tx.amount;
+//     }
+//     else if (tx.type === "add_money" && String(tx.receiver) === userId) {
+//       credit = tx.amount;
+//       runningBalance -= tx.amount;
+//     }
+//     else if (tx.type === "withdraw" && String(tx.receiver) === userId) {
+//       debit = tx.amount;
+//       runningBalance -= tx.amount;
+//     } else if (tx.type === "send") {
+//       if (String(tx.sender) === userId) {
+//         debit = tx.amount;
+//         runningBalance -= tx.amount;
+//       } else if (String(tx.receiver) === userId) {
+//         credit = tx.amount;
+//         runningBalance += tx.amount;
+//       }
+//     }
+//     return {
+//       date: tx.createdAt,
+//       type: tx.type,
+//       debit,
+//       credit,
+//       balance: runningBalance,
+//     };
+//   });
+//   // 4. Apply pagination (latest first for user view)
+//   const paginated = statementFull.reverse().slice((page - 1) * limit, page * limit);
+//   return {
+//     meta: {
+//       page,
+//       limit,
+//       total: statementFull.length,
+//       totalPages: Math.ceil(statementFull.length / limit),
+//     },
+//     data: paginated,
+//   };
+// };
 const createCashoutUser = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     // 1. Check if user exists
     const user = yield user_model_1.User.findById(userId);
@@ -507,5 +677,5 @@ const createCashInUser = (userId, payload) => __awaiter(void 0, void 0, void 0, 
     };
 });
 exports.TransactionServices = {
-    createCashInUser, createTopUpMoney, createWithdrawMoney, createSendMoney, createCashIn, createCashout, createHistory, createCashoutUser
+    createCashInUser, createTopUpMoney, createWithdrawMoney, createSendMoney, createCashIn, createCashout, createHistory, createCashoutUser, createAgentHistory
 };

@@ -1,15 +1,19 @@
 import { Schema, model} from 'mongoose';
-import { ITransaction } from './transaction.interface';
+import { ITransaction, TransactionType } from './transaction.interface';
 
 
 const TransactionSchema = new Schema<ITransaction>(
   {
  
-    type: {
-      type: String,
-      enum: ['add_money', 'withdraw', 'send', 'cash_in', 'cash_out']
+    // type: {
+    //   type: String,
+    //   enum: ['add_money', 'withdraw', 'send', 'cash_in', 'cash_out']
       
-    },
+    // },
+    type: {
+            type: String,
+            enum: Object.values(TransactionType),
+        },
     amount: {
       type: Number,
       min: 0,

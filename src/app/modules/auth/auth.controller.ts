@@ -87,13 +87,16 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
 
     res.clearCookie("accessToken", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax"
+        secure: true,
+        sameSite: "none",
+
+
+
     })
     res.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax"
+        secure: true,
+        sameSite: "none",
     })
 
     sendResponse(res, {
@@ -119,7 +122,7 @@ const forgotPassword = catchAsync(async (req: Request, res: Response, next: Next
 })
 const getEmailbyPhone = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { phone } = req.query;
-    const email= await AuthServices.getEmail(phone as string);
+    const email = await AuthServices.getEmail(phone as string);
     console.log(phone);
     sendResponse(res, {
         success: true,
@@ -128,6 +131,7 @@ const getEmailbyPhone = catchAsync(async (req: Request, res: Response, next: Nex
         data: email,
     })
 })
+
 
 
 export const AuthControllers = {

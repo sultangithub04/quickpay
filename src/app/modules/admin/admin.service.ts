@@ -10,32 +10,32 @@ import { Types } from "mongoose";
 
 
 const getUserHistory = async (userId: string) => {
-    const user = await User.findById(userId);
-    if (!user) {
-        throw new AppError(httpStatus.NOT_FOUND, "Admin not found");
-    }
-    const users = await User.find({ role: { $in: ["USER", "AGENT"] } })
-    const totalUser = await User.countDocuments({ role: "USER" })
-    const totalAgent = await User.countDocuments({ role: "AGENT" })
-    return { users, totalUser, totalAgent }
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "Admin not found");
+  }
+  const users = await User.find({ role: { $in: ["USER"] } })
+  const totalUser = await User.countDocuments({ role: "USER" })
+  const totalAgent = await User.countDocuments({ role: "AGENT" })
+  return { users, totalUser, totalAgent }
 }
 const getAgentHistory = async (userId: string) => {
-    const user = await User.findById(userId);
-    if (!user) {
-        throw new AppError(httpStatus.NOT_FOUND, "Admin not found");
-    }
-    const users = await User.find({ role: "AGENT" })
-    const totalAgent = await User.countDocuments({ role: "AGENT" })
-    return { users, totalAgent }
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "Admin not found");
+  }
+  const users = await User.find({ role: "AGENT" })
+  const totalAgent = await User.countDocuments({ role: "AGENT" })
+  return { users, totalAgent }
 }
 const getWalletHistory = async (userId: string) => {
-    const user = await User.findById(userId);
-    if (!user) {
-        throw new AppError(httpStatus.NOT_FOUND, "Admin not found");
-    }
-    const wallets = await Wallet.find().populate('user')
-    const TotalWallet = await Wallet.countDocuments()
-    return { wallets, TotalWallet }
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "Admin not found");
+  }
+  const wallets = await Wallet.find().populate('user')
+  const TotalWallet = await Wallet.countDocuments()
+  return { wallets, TotalWallet }
 }
 // const getTransactionHistory = async (userId: string, page: number = 1, limit: number = 10) => {
 //     // 1. Check if user exists
@@ -123,7 +123,7 @@ const getWalletHistory = async (userId: string) => {
 //     }
 
 //     if (filters.search) {
-        
+
 //         query.$or = [
 //             { "sender.name": { $regex: filters.search, $options: "i" } },
 //             { "receiver.name": { $regex: filters.search, $options: "i" } },
@@ -267,55 +267,69 @@ const getTransactionHistory = async (
 };
 
 const blockWallet = async (userId: Types.ObjectId) => {
-    const wallet = await Wallet.findOneAndUpdate({ user: userId }, { isBlocked: true }, { new: true });
-    if (!wallet) throw new AppError(404, "Wallet not found");
-    return wallet
+  const wallet = await Wallet.findOneAndUpdate({ user: userId }, { isBlocked: true }, { new: true });
+  if (!wallet) throw new AppError(404, "Wallet not found");
+  return wallet
 }
 const unBlockWallet = async (userId: Types.ObjectId) => {
-    const wallet = await Wallet.findOneAndUpdate({ user: userId }, { isBlocked: false }, { new: true });
-    if (!wallet) throw new AppError(404, "Wallet not found");
-    return wallet
+  const wallet = await Wallet.findOneAndUpdate({ user: userId }, { isBlocked: false }, { new: true });
+  if (!wallet) throw new AppError(404, "Wallet not found");
+  return wallet
+}
+const statusService = async (userId: string, isActive: string) => {
+
+  const result = await User.findOneAndUpdate({ phone: userId }, { isActive: isActive }, { new: true });
+
+  return result
+}
+const verifyService = async (userId: string) => {
+  // const user = await User.findOne({ phone });
+  // const newStatus=!isVerify.
+console.log(userId);
+  const result = await User.findOneAndUpdate({ phone: userId }, { isVerify: true }, { new: true });
+
+  return result
 }
 const aproveAgent = async (userId: string) => {
-    const wallet = await User.findOneAndUpdate({ phone: userId }, { isActive: IsActive.ACTIVE }, { new: true });
-    if (!wallet) throw new AppError(404, "Wallet not found");
-    return wallet
+  const wallet = await User.findOneAndUpdate({ phone: userId }, { isActive: IsActive.ACTIVE }, { new: true });
+  if (!wallet) throw new AppError(404, "Wallet not found");
+  return wallet
 }
 const deleteUserService = async (_id: string) => {
-    const result = await User.deleteOne({ _id });
-    if (result.deletedCount === 0) {
-        throw new AppError(404, "User not found");
-    }
-    return result
+  const result = await User.deleteOne({ _id });
+  if (result.deletedCount === 0) {
+    throw new AppError(404, "User not found");
+  }
+  return result
 }
 
 
 const getOverView = async (userId: string) => {
-    const user = await User.findById(userId);
-    if (!user) {
-        throw new AppError(httpStatus.NOT_FOUND, "Admin not found");
-    }
-    const totalUser = await User.countDocuments({ role: "USER" })
-    const totalAgent = await User.countDocuments({ role: "AGENT" })
-    const totaltransaction = await Transaction.countDocuments();
-    const result = await Transaction.aggregate([
-        {
-            $group: {
-                _id: null,
-                totalVolume: { $sum: "$amount" },
-            },
-        },
-    ]);
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "Admin not found");
+  }
+  const totalUser = await User.countDocuments({ role: "USER" })
+  const totalAgent = await User.countDocuments({ role: "AGENT" })
+  const totaltransaction = await Transaction.countDocuments();
+  const result = await Transaction.aggregate([
+    {
+      $group: {
+        _id: null,
+        totalVolume: { $sum: "$amount" },
+      },
+    },
+  ]);
 
-    const totalVolume = result.length > 0 ? result[0].totalVolume : 0;
-    return { totalUser, totalAgent, totaltransaction, totalVolume }
+  const totalVolume = result.length > 0 ? result[0].totalVolume : 0;
+  return { totalUser, totalAgent, totaltransaction, totalVolume }
 }
 
 
 
 export const adminServices = {
-    getUserHistory, getAgentHistory, getOverView,
-    getWalletHistory, getTransactionHistory, blockWallet, unBlockWallet, aproveAgent, deleteUserService
+  getUserHistory, getAgentHistory, getOverView,statusService,verifyService,
+  getWalletHistory, getTransactionHistory, blockWallet, unBlockWallet, aproveAgent, deleteUserService
 }
 
 

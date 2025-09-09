@@ -13,7 +13,7 @@ const setAuthCookie = (res, tokenInfo) => {
         res.cookie("refreshToken", tokenInfo.refreshToken, {
             httpOnly: true,
             secure: true,
-            sameSite: "none"
+            sameSite: "none",
         });
     }
 };

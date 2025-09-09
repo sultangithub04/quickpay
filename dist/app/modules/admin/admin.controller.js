@@ -133,6 +133,28 @@ const aproveAgent = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(v
         data: getuser,
     });
 }));
+const statusService = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { isActive } = req.body;
+    console.log(id, isActive);
+    const getuser = yield admin_service_1.adminServices.statusService(id, isActive);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.default.OK,
+        message: " Status Change Successfully",
+        data: getuser,
+    });
+}));
+const verifyService = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const getuser = yield admin_service_1.adminServices.verifyService(id);
+    (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.default.OK,
+        message: " verify Successfully",
+        data: getuser,
+    });
+}));
 const deleteUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const getuser = yield admin_service_1.adminServices.deleteUserService(id);
@@ -144,5 +166,6 @@ const deleteUser = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(vo
     });
 }));
 exports.AdminControllers = {
-    getAllUser, getAllAgent, getAllWallet, getAllTransaction, blockWallet, unBlockWallet, aproveAgent, deleteUser, overView
+    getAllUser, getAllAgent, getAllWallet, getAllTransaction, statusService, verifyService,
+    blockWallet, unBlockWallet, aproveAgent, deleteUser, overView
 };

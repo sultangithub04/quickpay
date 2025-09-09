@@ -126,6 +126,28 @@ const aproveAgent = catchAsync(async (req: Request, res: Response, next: NextFun
         data: getuser,
     })
 })
+const statusService = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const {id}  = req.params;
+    const {isActive}= req.body
+    console.log(id, isActive);
+    const getuser = await adminServices.statusService(id, isActive)
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: " Status Change Successfully",
+        data: getuser,
+    })
+})
+const verifyService = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const getuser = await adminServices.verifyService(id)
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: " verify Successfully",
+        data: getuser,
+    })
+})
 const deleteUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const getuser = await adminServices.deleteUserService(id)
@@ -139,5 +161,6 @@ const deleteUser = catchAsync(async (req: Request, res: Response, next: NextFunc
 
 
 export const AdminControllers = {
-    getAllUser, getAllAgent, getAllWallet, getAllTransaction, blockWallet, unBlockWallet, aproveAgent, deleteUser, overView
+    getAllUser, getAllAgent, getAllWallet, getAllTransaction,statusService,verifyService,
+     blockWallet, unBlockWallet, aproveAgent, deleteUser, overView
 }

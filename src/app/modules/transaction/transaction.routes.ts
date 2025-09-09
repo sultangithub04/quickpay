@@ -17,6 +17,7 @@ router.patch("/cash-out",checkAuth(Role.AGENT), TransactionControllers.cashOut)
 router.patch("/cash-out-user",checkAuth(Role.USER), TransactionControllers.cashOutuser)
 router.patch("/cash-in-user",checkAuth(Role.USER), TransactionControllers.cashInuser)
 router.get("/me",checkAuth(Role.AGENT, Role.USER, Role.ADMIN), TransactionControllers.transactionHistory)
+router.get("/agent-transaction-history", checkAuth(Role.AGENT, Role.ADMIN, Role.SUPER_ADMIN),  TransactionControllers.AgentTranHis)
 
 
 export const TransactionRoutes = router

@@ -1,11 +1,23 @@
 import { Types } from "mongoose";
 
-export type TransactionType =
-  | 'add_money'
-  | 'withdraw'
-  | 'send'
-  | 'cash_in'
-  | 'cash_out';
+// export type TransactionType =
+//   | 'add_money'
+//   | 'withdraw'
+//   | 'send'
+//   | 'cash_in'
+//   | 'cash_out';
+
+  
+export enum TransactionType {
+  add_money='add_money',
+  withdraw='withdraw',
+  send_money='send',
+  cash_in='cash_in',
+  cash_out='cash_out'
+}
+
+
+
 
 export type TransactionStatus = 'pending' | 'completed' | 'failed';
 
